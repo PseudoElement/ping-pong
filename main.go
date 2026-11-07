@@ -1,5 +1,10 @@
 package main
 
+import (
+	"github.com/pseudoelement/ping-pong/src/game"
+)
+
 func main() {
-	println("Hello, world!")
+	game := game.NewGame()
+	game.Start()
 }
