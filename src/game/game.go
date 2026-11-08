@@ -5,19 +5,20 @@ import (
 
 	"github.com/fstanis/screenresolution"
 	rl "github.com/gen2brain/raylib-go/raylib"
-	sdkmodels "github.com/pseudoelement/ping-pong/sdk/models"
-	sdkstyles "github.com/pseudoelement/ping-pong/sdk/styles"
-	"github.com/pseudoelement/ping-pong/src/models"
+	"github.com/pseudoelement/ping-pong/sdk/utils"
+	"github.com/pseudoelement/ping-pong/src/events"
+	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/settings"
+	"github.com/pseudoelement/ping-pong/src/sounds"
 )
 
 type Game struct {
-	settings *settings.GameSettings
+	injector *injector.Injector
 }
 
 func NewGame() *Game {
 	return &Game{
-		settings: settings.NewGameSettings(),
+		injector: injector.NewInjector(),
 	}
 }
 
@@ -33,39 +34,38 @@ func (g *Game) Start() {
 	windowWidth, windowHeight := int32(resolution.Width), int32(resolution.Height-70)
 	fontSize := int32(35)
 
-	g.settings.SetFontSize(fontSize)
-	g.settings.SetWindowHeight(windowHeight)
-	g.settings.SetWindowWidth(windowWidth)
-
+	rl.InitAudioDevice()
 	rl.InitWindow(windowWidth, windowHeight, "PingPong(raylib)")
 	rl.SetTargetFPS(60)
 
-	textObjects := make([]sdkstyles.ITextObject, 3)
-	textObjects[0] = models.NewTextObject(models.TextObjectStructParams{
-		InitialValue:  "First",
-		FontSize:      20,
-		Color:         rl.Black,
-		InitialCoords: sdkmodels.Coords{X: 100, Y: 100},
-	})
-	textObjects[1] = models.NewTextObject(models.TextObjectStructParams{
-		InitialValue:  "Second",
-		FontSize:      20,
-		Color:         rl.Black,
-		InitialCoords: sdkmodels.Coords{X: 100, Y: 100},
-	})
-	textObjects[2] = models.NewTextObject(models.TextObjectStructParams{
-		InitialValue:  "Third",
-		FontSize:      20,
-		Color:         rl.Black,
-		InitialCoords: sdkmodels.Coords{X: 100, Y: 100},
-	})
+	eventManager := events.NewEventManager()
+	soundLoader := sounds.NewSoundLoader()
+	gameSettings := settings.NewGameSettings()
+
+	g.injector.SetEventManager(eventManager)
+	g.injector.SetSoundLoader(soundLoader)
+	g.injector.SetGameSettings(gameSettings)
+
+	g.injector.Settings().SetFontSize(fontSize)
+	g.injector.Settings().SetWindowHeight(windowHeight)
+	g.injector.Settings().SetWindowWidth(windowWidth)
+
+	imgPath := utils.AppPath("../assets/images/pad.png")
+	img := rl.LoadImage(imgPath.Normalize())
+	texture := rl.LoadTextureFromImage(img)
 
 	for !rl.WindowShouldClose() {
 		rl.ClearBackground(rl.Pink)
 		rl.BeginDrawing()
-		sdkstyles.Flex(textObjects, sdkstyles.FLEX_DIR_COLUMN, windowWidth/2, windowHeight/2, 25)
+		// sdkstyles.Flex(textObjects, sdkstyles.FLEX_DIR_COLUMN, windowWidth/2, windowHeight/2, 25)
 		// rl.DrawText("End!", 100, windowHeight-60, fontSize, rl.Black)
+
+		rl.DrawTexture(texture, 100, 100, rl.White)
+
 		rl.EndDrawing()
+
+		g.injector.EventManager().UseEventHandlers()
+
 	}
 
 	rl.CloseWindow()

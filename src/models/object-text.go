@@ -7,14 +7,10 @@ import (
 )
 
 type ITextObject interface {
-	Coords() models.Coords
-	SetCoords(models.Coords)
+	IBaseObject
 
 	Value() string
 	SetValue(string)
-
-	Color() color.RGBA
-	SetColor(color.RGBA)
 
 	FontSize() int32
 	Width() int32 // equals int32((float64(object.FontSize()) / 1.75)) * len(object.Value())
@@ -22,6 +18,7 @@ type ITextObject interface {
 }
 
 type TextObjectStructParams struct {
+	Id            string
 	InitialValue  string
 	FontSize      int32
 	Color         color.RGBA
@@ -31,27 +28,22 @@ type TextObjectStructParams struct {
 var _ ITextObject = (*TextObject)(nil)
 
 type TextObject struct {
+	*BaseObject
 	value    string
 	fontSize int32
-	color    color.RGBA
-	coords   models.Coords
 }
 
 func NewTextObject(p TextObjectStructParams) *TextObject {
 	return &TextObject{
+		BaseObject: NewBaseObject(BaseObjectStructParams{
+			Id:            p.Id,
+			Color:         p.Color,
+			InitialCoords: p.InitialCoords,
+			Kind:          KindText,
+		}),
 		value:    p.InitialValue,
 		fontSize: p.FontSize,
-		color:    p.Color,
-		coords:   p.InitialCoords,
 	}
-}
-
-func (to *TextObject) Coords() models.Coords {
-	return to.coords
-}
-
-func (to *TextObject) SetCoords(coords models.Coords) {
-	to.coords = coords
 }
 
 func (to *TextObject) Value() string {
@@ -60,14 +52,6 @@ func (to *TextObject) Value() string {
 
 func (to *TextObject) SetValue(val string) {
 	to.value = val
-}
-
-func (to *TextObject) Color() color.RGBA {
-	return to.color
-}
-
-func (to *TextObject) SetColor(newColor color.RGBA) {
-	to.color = newColor
 }
 
 func (to *TextObject) FontSize() int32 {
