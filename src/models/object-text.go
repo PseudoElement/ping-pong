@@ -4,28 +4,16 @@ import (
 	"image/color"
 
 	"github.com/pseudoelement/ping-pong/sdk/models"
+	"github.com/pseudoelement/ping-pong/src/constants"
+	"github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
-type ITextObject interface {
-	IBaseObject
-
-	Value() string
-	SetValue(string)
-
-	FontSize() int32
-	Width() int32 // equals int32((float64(object.FontSize()) / 1.75)) * len(object.Value())
-	Height() int32
-}
-
 type TextObjectStructParams struct {
-	Id            string
 	InitialValue  string
 	FontSize      int32
 	Color         color.RGBA
 	InitialCoords models.Coords
 }
-
-var _ ITextObject = (*TextObject)(nil)
 
 type TextObject struct {
 	*BaseObject
@@ -33,13 +21,12 @@ type TextObject struct {
 	fontSize int32
 }
 
-func NewTextObject(p TextObjectStructParams) *TextObject {
+func NewTextObject(p TextObjectStructParams) interfaces.ITextObject {
 	return &TextObject{
 		BaseObject: NewBaseObject(BaseObjectStructParams{
-			Id:            p.Id,
 			Color:         p.Color,
 			InitialCoords: p.InitialCoords,
-			Kind:          KindText,
+			Kind:          constants.KindText,
 		}),
 		value:    p.InitialValue,
 		fontSize: p.FontSize,

@@ -5,9 +5,9 @@ import (
 
 	"github.com/fstanis/screenresolution"
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/events"
 	"github.com/pseudoelement/ping-pong/src/injector"
+	"github.com/pseudoelement/ping-pong/src/models"
 	"github.com/pseudoelement/ping-pong/src/settings"
 	"github.com/pseudoelement/ping-pong/src/sounds"
 )
@@ -41,31 +41,28 @@ func (g *Game) Start() {
 	eventManager := events.NewEventManager()
 	soundLoader := sounds.NewSoundLoader()
 	gameSettings := settings.NewGameSettings()
+	renderer := NewRenderer(g.injector)
 
 	g.injector.SetEventManager(eventManager)
 	g.injector.SetSoundLoader(soundLoader)
 	g.injector.SetGameSettings(gameSettings)
+	g.injector.SetRenderer(renderer)
 
 	g.injector.Settings().SetFontSize(fontSize)
 	g.injector.Settings().SetWindowHeight(windowHeight)
 	g.injector.Settings().SetWindowWidth(windowWidth)
 
-	imgPath := utils.AppPath("../assets/images/pad.png")
-	img := rl.LoadImage(imgPath.Normalize())
-	texture := rl.LoadTextureFromImage(img)
+	renderer.setScreen(models.NewScreenMenu(g.injector))
+
+	// imgPath := utils.AppPath("../assets/images/pad.png")
+	// img := rl.LoadImage(imgPath.Normalize())
+	// texture := rl.LoadTextureFromImage(img)
 
 	for !rl.WindowShouldClose() {
-		rl.ClearBackground(rl.Pink)
-		rl.BeginDrawing()
-		// sdkstyles.Flex(textObjects, sdkstyles.FLEX_DIR_COLUMN, windowWidth/2, windowHeight/2, 25)
-		// rl.DrawText("End!", 100, windowHeight-60, fontSize, rl.Black)
-
-		rl.DrawTexture(texture, 100, 100, rl.White)
-
-		rl.EndDrawing()
-
-		g.injector.EventManager().UseEventHandlers()
-
+		// rl.DrawTexture(texture, 100, 100, rl.White)
+		rl.ClearBackground(rl.White)
+		eventManager.UseEventHandlers()
+		renderer.Render()
 	}
 
 	rl.CloseWindow()
