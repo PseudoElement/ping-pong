@@ -1,7 +1,9 @@
 package models
 
+type UnsubscribeFn func()
+
 type Subscriber[T any] struct {
-	Unsubscribe func()
+	unsubscribe UnsubscribeFn
 	callback    func(T)
 	idx         int16
 }
@@ -30,12 +32,12 @@ func (s *EventEmitter[T]) Emit(value T) {
 	}
 }
 
-func (s *EventEmitter[T]) Subscribe(callback func(T)) Subscriber[T] {
+func (s *EventEmitter[T]) Subscribe(callback func(T)) UnsubscribeFn {
 	counter := s.counter
 	sub := Subscriber[T]{
 		idx:      counter,
 		callback: callback,
-		Unsubscribe: func() {
+		unsubscribe: func() {
 			filteredSubs := make([]Subscriber[T], 0, len(s.subs))
 			for _, sub := range s.subs {
 				if sub.idx != counter {
@@ -47,5 +49,5 @@ func (s *EventEmitter[T]) Subscribe(callback func(T)) Subscriber[T] {
 	}
 	s.subs = append(s.subs, sub)
 	s.counter++
-	return sub
+	return sub.unsubscribe
 }

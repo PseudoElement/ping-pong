@@ -1,15 +1,18 @@
 package game
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/fstanis/screenresolution"
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/events"
 	"github.com/pseudoelement/ping-pong/src/injector"
+	"github.com/pseudoelement/ping-pong/src/loaders"
 	"github.com/pseudoelement/ping-pong/src/models"
 	"github.com/pseudoelement/ping-pong/src/settings"
-	"github.com/pseudoelement/ping-pong/src/sounds"
 )
 
 type Game struct {
@@ -39,7 +42,7 @@ func (g *Game) Start() {
 	rl.SetTargetFPS(60)
 
 	eventManager := events.NewEventManager()
-	soundLoader := sounds.NewSoundLoader()
+	soundLoader := loaders.NewSoundLoader()
 	gameSettings := settings.NewGameSettings()
 	renderer := NewRenderer(g.injector)
 
@@ -48,17 +51,26 @@ func (g *Game) Start() {
 	g.injector.SetGameSettings(gameSettings)
 	g.injector.SetRenderer(renderer)
 
-	g.injector.Settings().SetFontSize(fontSize)
-	g.injector.Settings().SetWindowHeight(windowHeight)
-	g.injector.Settings().SetWindowWidth(windowWidth)
+	g.injector.GameSettings().SetFontSize(fontSize)
+	g.injector.GameSettings().SetWindowHeight(windowHeight)
+	g.injector.GameSettings().SetWindowWidth(windowWidth)
 
-	renderer.setScreen(models.NewScreenMenu(g.injector))
+	renderer.SetScreen(models.NewScreenMenu(g.injector))
+	renderer.setStaticObjects()
+
+	var frameCount int32 = 1
+	fpsFn := func() {
+		g.injector.GameSettings().SetFps(frameCount)
+		frameCount = 1
+	}
+	utils.Interval(context.Background(), fpsFn, 1*time.Second)
 
 	// imgPath := utils.AppPath("../assets/images/pad.png")
 	// img := rl.LoadImage(imgPath.Normalize())
 	// texture := rl.LoadTextureFromImage(img)
 
 	for !rl.WindowShouldClose() {
+		frameCount++
 		// rl.DrawTexture(texture, 100, 100, rl.White)
 		rl.ClearBackground(rl.White)
 		eventManager.UseEventHandlers()

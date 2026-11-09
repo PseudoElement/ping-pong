@@ -14,7 +14,7 @@ func (path *AppPath) Valid() bool {
 func (path *AppPath) Normalize() string {
 	relativePath, ok := strings.CutPrefix(string(*path), "../")
 	if !ok {
-		panic("[GetNormalizedPath] invalid path: " + *path)
+		panic("[AppPath_Normalize] invalid path: " + *path)
 	}
 
 	exePath, _ := os.Executable()

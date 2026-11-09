@@ -1,4 +1,4 @@
-package sounds
+package loaders
 
 type AppSound string
 

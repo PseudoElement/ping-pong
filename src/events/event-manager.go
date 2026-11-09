@@ -7,23 +7,26 @@ import (
 )
 
 type EventManager struct {
-	eventsStrategy IEventStrategy
-
-	mouseEventEmitter    *models.EventEmitter[constants.MouseClickEvent]
-	keyboardEventEmitter *models.EventEmitter[constants.KeyPressedEvent]
+	mouseClickEventEmitter *models.EventEmitter[constants.MouseClickEvent]
+	mouseMoveEventEmitter  *models.EventEmitter[constants.MouseMoveEvent]
+	keyboardEventEmitter   *models.EventEmitter[constants.KeyPressedEvent]
 }
 
 func NewEventManager() *EventManager {
 	rl.GetMouseX()
 	return &EventManager{
-		eventsStrategy:       NewMenuEventStrategy(),
-		mouseEventEmitter:    models.NewEventEmitter(constants.MouseClickEvent{}),
-		keyboardEventEmitter: models.NewEventEmitter(constants.KeyPressedEvent{}),
+		mouseClickEventEmitter: models.NewEventEmitter(constants.MouseClickEvent{}),
+		mouseMoveEventEmitter:  models.NewEventEmitter(constants.MouseMoveEvent{}),
+		keyboardEventEmitter:   models.NewEventEmitter(constants.KeyPressedEvent{}),
 	}
 }
 
-func (em *EventManager) MouseEventEmitter() *models.EventEmitter[constants.MouseClickEvent] {
-	return em.mouseEventEmitter
+func (em *EventManager) MouseClickEventEmitter() *models.EventEmitter[constants.MouseClickEvent] {
+	return em.mouseClickEventEmitter
+}
+
+func (em *EventManager) MouseMoveEventEmitter() *models.EventEmitter[constants.MouseMoveEvent] {
+	return em.mouseMoveEventEmitter
 }
 
 func (em *EventManager) KeyboardEventEmitter() *models.EventEmitter[constants.KeyPressedEvent] {
@@ -33,19 +36,23 @@ func (em *EventManager) KeyboardEventEmitter() *models.EventEmitter[constants.Ke
 func (em *EventManager) UseEventHandlers() {
 	/* MOUSE EVENTS */
 	if rl.IsMouseButtonPressed(rl.MouseLeftButton) {
-		em.mouseEventEmitter.Emit(constants.MouseClickEvent{
+		em.mouseClickEventEmitter.Emit(constants.MouseClickEvent{
 			PosX: rl.GetMouseX(),
 			PosY: rl.GetMouseY(),
 			Kind: rl.MouseButtonLeft,
 		})
 	}
 	if rl.IsMouseButtonPressed(rl.MouseRightButton) {
-		em.mouseEventEmitter.Emit(constants.MouseClickEvent{
+		em.mouseClickEventEmitter.Emit(constants.MouseClickEvent{
 			PosX: rl.GetMouseX(),
 			PosY: rl.GetMouseY(),
 			Kind: rl.MouseButtonRight,
 		})
 	}
+	em.mouseMoveEventEmitter.Emit(constants.MouseMoveEvent{
+		PosX: rl.GetMouseX(),
+		PosY: rl.GetMouseY(),
+	})
 
 	/* KEYBOARD EVENTS */
 	for _, keyPressed := range []int32{rl.KeyW, rl.KeyS, rl.KeyA, rl.KeyD} {

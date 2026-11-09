@@ -2,7 +2,7 @@ package utils
 
 import "github.com/pseudoelement/ping-pong/sdk/models"
 
-func IsTextObjectClicked(mouseCoords, objectCoords models.Coords, width int32, height int32) bool {
+func IsTextObjectHovered(mouseCoords, objectCoords models.Coords, width int32, height int32) bool {
 	objCoordLeft, objCoordRight := objectCoords.X, objectCoords.X+width
 	objCoordTop, objCoordBottom := objectCoords.Y, objectCoords.Y+height
 	if (mouseCoords.X >= objCoordLeft && mouseCoords.X <= objCoordRight) &&

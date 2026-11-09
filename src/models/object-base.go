@@ -6,10 +6,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/src/constants"
+	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type BaseObject struct {
+	injector *injector.Injector
+
 	id       string
 	coords   models.Coords
 	color    color.RGBA
@@ -17,21 +20,34 @@ type BaseObject struct {
 	kind     constants.ObjectKind
 }
 
+var _ interfaces.IBaseObject = (*BaseObject)(nil)
+
 type BaseObjectStructParams struct {
 	Color         color.RGBA
 	InitialCoords models.Coords
 	Kind          constants.ObjectKind
+	Id            string
 }
 
-func NewBaseObject(p BaseObjectStructParams) *BaseObject {
-	uid, _ := uuid.NewUUID()
+func NewBaseObject(p BaseObjectStructParams, injector *injector.Injector) *BaseObject {
+	id := p.Id
+	if id == "" {
+		uid, _ := uuid.NewUUID()
+		id = uid.String()
+	}
+
 	return &BaseObject{
+		injector: injector,
 		children: make([]interfaces.IBaseObject, 0),
-		id:       uid.String(),
+		id:       id,
 		coords:   p.InitialCoords,
 		color:    p.Color,
 		kind:     p.Kind,
 	}
+}
+
+func (bo *BaseObject) Injector() interfaces.IInjector {
+	return bo.injector
 }
 
 func (bo *BaseObject) Kind() constants.ObjectKind {
@@ -69,7 +85,7 @@ func (bo *BaseObject) Children() []interfaces.IBaseObject {
 	return bo.children
 }
 
-func (bo *BaseObject) AppendChild(child *BaseObject) {
+func (bo *BaseObject) AppendChild(child interfaces.IBaseObject) {
 	bo.children = append(bo.children, child)
 }
 

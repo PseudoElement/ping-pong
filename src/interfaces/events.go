@@ -1,5 +1,15 @@
 package interfaces
 
-import "github.com/pseudoelement/ping-pong/src/constants"
+type IDestroyable interface {
+	/* Call this method every time when element removed  */
+	OnDestroy()
+}
 
-type MouseClickEventHandler func(constants.MouseClickEvent, ITextObject)
+type IHoverable interface {
+	SetHover(bool)
+	IsHovered() bool
+}
+
+type IUpdateable interface {
+	Update()
+}

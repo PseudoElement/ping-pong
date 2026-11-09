@@ -8,6 +8,11 @@ type MouseClickEvent struct {
 	Kind rl.MouseButton
 }
 
+type MouseMoveEvent struct {
+	PosX int32
+	PosY int32
+}
+
 type KeyPressedEvent struct {
 	/* int value from raylib-go lib */
 	KeyCode int32

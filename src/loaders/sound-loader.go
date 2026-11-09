@@ -1,4 +1,4 @@
-package sounds
+package loaders
 
 import (
 	"sync"

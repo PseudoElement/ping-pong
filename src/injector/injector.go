@@ -40,6 +40,10 @@ func (i *Injector) EventManager() interfaces.IEventManager {
 	return i.eventManager
 }
 
-func (i *Injector) Settings() *settings.GameSettings {
+func (i *Injector) GameSettings() *settings.GameSettings {
 	return i.gameSettings
+}
+
+func (i *Injector) Renderer() interfaces.IRenderer {
+	return i.renderer
 }
