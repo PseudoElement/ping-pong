@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
@@ -37,6 +38,11 @@ type ITextObject interface {
 type IImageObject interface {
 	IBaseObject
 
+	Texture() rl.Texture2D
 	Width() int32
 	Height() int32
+}
+
+type IRectangleObject interface {
+	IBaseObject
 }

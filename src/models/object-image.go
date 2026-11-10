@@ -1,6 +1,7 @@
 package models
 
 import (
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
@@ -12,12 +13,14 @@ type ImageObjectStructParams struct {
 	Styles        *styles.ObjectStyles
 	InitialCoords models.Coords
 	Id            string
+	Texture       rl.Texture2D
 }
 
 var _ interfaces.IImageObject = (*ImageObject)(nil)
 
 type ImageObject struct {
 	*BaseObject
+	texture rl.Texture2D
 }
 
 func NewImageObject(p ImageObjectStructParams, injector *injector.Injector) *ImageObject {
@@ -31,13 +34,18 @@ func NewImageObject(p ImageObjectStructParams, injector *injector.Injector) *Ima
 			},
 			injector,
 		),
+		texture: p.Texture,
 	}
 }
 
+func (to *ImageObject) Texture() rl.Texture2D {
+	return to.texture
+}
+
 func (to *ImageObject) Width() int32 {
-	return 100
+	return to.texture.Width
 }
 
 func (to *ImageObject) Height() int32 {
-	return 100
+	return to.texture.Height
 }

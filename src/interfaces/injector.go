@@ -10,6 +10,7 @@ import (
 
 type IInjector interface {
 	SoundLoader() ISoundLoader
+	ImageLoader() IImageLoader
 	EventManager() IEventManager
 	GameSettings() *settings.GameSettings
 	Renderer() IRenderer
@@ -21,11 +22,13 @@ type IInjector interface {
 }
 
 type ISoundLoader interface {
-	GetSound(soundName loaders.AppSound) (rl.Sound, bool)
+	GetSound(soundName loaders.AppSoundName) rl.Sound
 }
 
 type IImageLoader interface {
-	GetImage(imgName loaders.AppImage) (*rl.Image, bool)
+	GetImage(imgName loaders.AppImageName) rl.Texture2D
+	GetAppBackgrounds() []loaders.AppImage
+	GetAppBackground(bgName loaders.AppImageName) (loaders.AppImage, bool)
 }
 
 type IEventManager interface {
@@ -34,6 +37,8 @@ type IEventManager interface {
 	KeyboardEventEmitter() *models.EventEmitter[constants.KeyPressedEvent]
 
 	FpsToggleEventEmitter() *models.EventEmitter[constants.FpsToggleEvent]
+	BackgroundChangeEventEmitter() *models.EventEmitter[constants.BackgroundChangeEvent]
+	NextFrameEventEmitter() *models.EventEmitter[constants.NextFrameEvent]
 
 	UseUserInputHandlers()
 }

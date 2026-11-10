@@ -1,6 +1,7 @@
 package game
 
 import (
+	"math"
 	"slices"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -9,94 +10,81 @@ import (
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/interfaces"
+	"github.com/pseudoelement/ping-pong/src/loaders"
 	"github.com/pseudoelement/ping-pong/src/models"
 	"github.com/pseudoelement/ping-pong/src/models/ui"
 )
 
 type Renderer struct {
-	injector          *injector.Injector
-	openedScreen      interfaces.IScreen
-	staticTextObjects []interfaces.ITextObject
+	injector      *injector.Injector
+	openedScreen  interfaces.IScreen
+	staticObjects []interfaces.IBaseObject
 }
 
 var _ interfaces.IRenderer = (*Renderer)(nil)
 
 func NewRenderer(injector *injector.Injector) *Renderer {
 	return &Renderer{
-		injector:          injector,
-		openedScreen:      nil,
-		staticTextObjects: make([]interfaces.ITextObject, 0),
+		injector:      injector,
+		openedScreen:  nil,
+		staticObjects: make([]interfaces.IBaseObject, 0),
 	}
 }
 
 func (r *Renderer) Render() {
+	rl.ClearBackground(rl.White)
 	rl.BeginDrawing()
 
 	capacity :=
 		len(r.openedScreen.TextObjects()) +
 			len(r.openedScreen.RectObjects()) +
-			len(r.staticTextObjects)
+			len(r.staticObjects)
 	allObjects := make([]interfaces.IBaseObject, 0, capacity)
 
-	screenTextObjects := make([]interfaces.ITextObject, len(r.openedScreen.TextObjects()))
-	screenRectObjects := make([]interfaces.IBaseObject, len(r.openedScreen.RectObjects()))
-	staticTextObjects := make([]interfaces.ITextObject, len(r.staticTextObjects))
-
-	copy(screenTextObjects, r.openedScreen.TextObjects())
-	copy(screenRectObjects, r.openedScreen.RectObjects())
-	copy(staticTextObjects, r.staticTextObjects)
-
-	slices.SortFunc(screenTextObjects, func(prev, next interfaces.ITextObject) int {
-		return int(prev.Styles().ZIndex - next.Styles().ZIndex)
-	})
-	slices.SortFunc(screenRectObjects, func(prev, next interfaces.IBaseObject) int {
-		return int(prev.Styles().ZIndex - next.Styles().ZIndex)
-	})
-	slices.SortFunc(staticTextObjects, func(prev, next interfaces.ITextObject) int {
-		return int(prev.Styles().ZIndex - next.Styles().ZIndex)
-	})
-
-	// imgPath := utils.AppPath("../assets/images/pad.png")
-	// img := rl.LoadImage(imgPath.Normalize())
-	// texture := rl.LoadTextureFromImage(img)
-	// rl.ImageResize(img, 100, 100)
-	// rl.DrawTexture(texture, 100, 100, rl.White)
-
-	for _, textObject := range screenTextObjects {
-		rl.DrawText(
-			textObject.Value(),
-			textObject.Coords().X,
-			textObject.Coords().Y,
-			textObject.FontSize(),
-			textObject.Styles().Color,
-		)
+	for _, textObject := range r.openedScreen.TextObjects() {
 		allObjects = append(allObjects, textObject)
 	}
-	for _, rectObject := range screenRectObjects {
-		rl.DrawRectangle(
-			rectObject.Coords().X,
-			rectObject.Coords().Y,
-			100,
-			100,
-			rectObject.Styles().Color,
-		)
+	for _, rectObject := range r.openedScreen.RectObjects() {
 		allObjects = append(allObjects, rectObject)
 	}
-	for _, textObject := range staticTextObjects {
-		rl.DrawText(
-			textObject.Value(),
-			textObject.Coords().X,
-			textObject.Coords().Y,
-			textObject.FontSize(),
-			textObject.Styles().Color,
-		)
+	for _, textObject := range r.staticObjects {
 		allObjects = append(allObjects, textObject)
 	}
+
+	slices.SortFunc(allObjects, func(prev, next interfaces.IBaseObject) int {
+		return int(next.Styles().ZIndex - prev.Styles().ZIndex)
+	})
 
 	for _, obj := range allObjects {
 		updateableObj, ok := obj.(interfaces.IUpdateable)
 		if ok {
 			updateableObj.Update()
+		}
+
+		switch typedObj := obj.(type) {
+		case interfaces.ITextObject:
+			rl.DrawText(
+				typedObj.Value(),
+				typedObj.Coords().X,
+				typedObj.Coords().Y,
+				typedObj.FontSize(),
+				typedObj.Styles().Color,
+			)
+		case interfaces.IImageObject:
+			rl.DrawTexture(
+				typedObj.Texture(),
+				typedObj.Coords().X,
+				typedObj.Coords().Y,
+				rl.White,
+			)
+		case interfaces.IRectangleObject:
+			rl.DrawRectangle(
+				typedObj.Coords().X,
+				typedObj.Coords().Y,
+				100,
+				100,
+				typedObj.Styles().Color,
+			)
 		}
 	}
 
@@ -120,21 +108,38 @@ func (r *Renderer) init() {
 		Subscribe(func(event constants.FpsToggleEvent) {
 			_fpsToggleEventHandler(event, r)
 		})
+	r.injector.EventManager().
+		BackgroundChangeEventEmitter().
+		Subscribe(func(event constants.BackgroundChangeEvent) {
+			_backgroundChangeEventHandler(event, r)
+		})
 }
 
 func (r *Renderer) _setStaticObjects() {
+	settings := r.injector.GameSettings()
+	imgLoader := r.injector.ImageLoader()
+
 	fpsObject := ui.NewFpsObject(
 		models.TextObjectStructParams{
 			InitialValue:  "0 FPS",
 			FontSize:      32,
-			Styles:        &styles.ObjectStyles{Color: rl.Green},
+			Styles:        &styles.ObjectStyles{Color: rl.Green, ZIndex: math.MaxInt16},
 			InitialCoords: sdkmodels.Coords{X: 10, Y: 5},
 			Id:            FpsObjectId,
 		},
 		r.injector,
 	)
+	appBackgroundObject := models.NewImageObject(
+		models.ImageObjectStructParams{
+			Styles:        &styles.ObjectStyles{ZIndex: math.MinInt16},
+			InitialCoords: sdkmodels.Coords{X: 0, Y: 0},
+			Texture:       imgLoader.GetImage(settings.MainBackground),
+			Id:            MainBgObjectId,
+		},
+		r.injector,
+	)
 
-	r.staticTextObjects = append(r.staticTextObjects, fpsObject)
+	r.staticObjects = append(r.staticObjects, fpsObject, appBackgroundObject)
 }
 
 func _fpsToggleEventHandler(
@@ -146,21 +151,46 @@ func _fpsToggleEventHandler(
 			models.TextObjectStructParams{
 				InitialValue:  "0 FPS",
 				FontSize:      32,
-				Styles:        &styles.ObjectStyles{Color: rl.Green},
+				Styles:        &styles.ObjectStyles{Color: rl.Green, ZIndex: math.MaxInt16},
 				InitialCoords: sdkmodels.Coords{X: 10, Y: 5},
 				Id:            FpsObjectId,
 			},
 			renderer.injector,
 		)
-		renderer.staticTextObjects = append(renderer.staticTextObjects, fpsObject)
+		renderer.staticObjects = append(renderer.staticObjects, fpsObject)
 	} else {
-		nonNullableTextObjects := make([]interfaces.ITextObject, 0, len(renderer.staticTextObjects))
-		for _, obj := range renderer.staticTextObjects {
+		newStaticObjects := make([]interfaces.IBaseObject, 0, len(renderer.staticObjects))
+		for _, obj := range renderer.staticObjects {
 			if obj.Id() == FpsObjectId {
 				continue
 			}
-			nonNullableTextObjects = append(nonNullableTextObjects, obj)
+			newStaticObjects = append(newStaticObjects, obj)
 		}
-		renderer.staticTextObjects = nonNullableTextObjects
+		renderer.staticObjects = newStaticObjects
 	}
+}
+
+func _backgroundChangeEventHandler(
+	event constants.BackgroundChangeEvent,
+	renderer *Renderer,
+) {
+	imgLoader := renderer.injector.ImageLoader()
+
+	newStaticObjects := make([]interfaces.IBaseObject, 0, len(renderer.staticObjects))
+	for _, obj := range renderer.staticObjects {
+		if obj.Id() == MainBgObjectId {
+			obj = models.NewImageObject(
+				models.ImageObjectStructParams{
+					Styles:        &styles.ObjectStyles{ZIndex: math.MinInt16},
+					InitialCoords: sdkmodels.Coords{X: 0, Y: 0},
+					Texture:       imgLoader.GetImage(loaders.AppImageName(event.Name)),
+					Id:            MainBgObjectId,
+				},
+				renderer.injector,
+			)
+		}
+		newStaticObjects = append(newStaticObjects, obj)
+	}
+
+	renderer.staticObjects = newStaticObjects
 }

@@ -43,7 +43,7 @@ func (g *Game) Start() {
 
 	eventManager := events.NewEventManager()
 	soundLoader := loaders.NewSoundLoader()
-	imageLoader := loaders.NewImageLoader()
+	imageLoader := loaders.NewImageLoader(windowWidth, windowHeight)
 	gameSettings := settings.NewGameSettings()
 	renderer := NewRenderer(g.injector)
 
@@ -69,7 +69,6 @@ func (g *Game) Start() {
 
 	for !rl.WindowShouldClose() {
 		frameCount++
-		rl.ClearBackground(rl.White)
 		eventManager.UseUserInputHandlers()
 		renderer.Render()
 	}

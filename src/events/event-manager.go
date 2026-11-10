@@ -12,6 +12,8 @@ type EventManager struct {
 	mouseMoveEventEmitter  *models.EventEmitter[constants.MouseMoveEvent]
 	keyboardEventEmitter   *models.EventEmitter[constants.KeyPressedEvent]
 	fpsToggleEventEmitter  *models.EventEmitter[constants.FpsToggleEvent]
+	bgChangedEventEmitter  *models.EventEmitter[constants.BackgroundChangeEvent]
+	nextFrameEventEmitter  *models.EventEmitter[constants.NextFrameEvent]
 }
 
 var _ interfaces.IEventManager = (*EventManager)(nil)
@@ -23,6 +25,8 @@ func NewEventManager() *EventManager {
 		mouseMoveEventEmitter:  models.NewEventEmitter(constants.MouseMoveEvent{}),
 		keyboardEventEmitter:   models.NewEventEmitter(constants.KeyPressedEvent{}),
 		fpsToggleEventEmitter:  models.NewEventEmitter(constants.FpsToggleEvent{}),
+		bgChangedEventEmitter:  models.NewEventEmitter(constants.BackgroundChangeEvent{}),
+		nextFrameEventEmitter:  models.NewEventEmitter(constants.NextFrameEvent{}),
 	}
 }
 
@@ -40,6 +44,14 @@ func (em *EventManager) KeyboardEventEmitter() *models.EventEmitter[constants.Ke
 
 func (em *EventManager) FpsToggleEventEmitter() *models.EventEmitter[constants.FpsToggleEvent] {
 	return em.fpsToggleEventEmitter
+}
+
+func (em *EventManager) BackgroundChangeEventEmitter() *models.EventEmitter[constants.BackgroundChangeEvent] {
+	return em.bgChangedEventEmitter
+}
+
+func (em *EventManager) NextFrameEventEmitter() *models.EventEmitter[constants.NextFrameEvent] {
+	return em.nextFrameEventEmitter
 }
 
 func (em *EventManager) UseUserInputHandlers() {
@@ -64,11 +76,14 @@ func (em *EventManager) UseUserInputHandlers() {
 	})
 
 	/* KEYBOARD EVENTS */
-	for _, keyPressed := range []int32{rl.KeyW, rl.KeyS, rl.KeyA, rl.KeyD} {
-		if rl.IsKeyPressed((keyPressed)) {
+	for _, keyCode := range []int32{rl.KeyW, rl.KeyS, rl.KeyA, rl.KeyD} {
+		if rl.IsKeyPressed((keyCode)) {
 			em.keyboardEventEmitter.Emit(constants.KeyPressedEvent{
-				KeyCode: keyPressed,
+				KeyCode: keyCode,
 			})
 		}
 	}
+
+	/* OTHER EVENTS */
+	em.nextFrameEventEmitter.Emit(constants.NextFrameEvent{})
 }

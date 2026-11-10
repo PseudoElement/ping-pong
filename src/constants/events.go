@@ -21,3 +21,10 @@ type KeyPressedEvent struct {
 type FpsToggleEvent struct {
 	ShowFps bool
 }
+
+type NextFrameEvent struct{}
+
+type BackgroundChangeEvent struct {
+	Name string
+	Href string
+}

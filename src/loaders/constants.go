@@ -1,27 +1,65 @@
 package loaders
 
-type AppSound string
-
-/**
- * AppSound should start from "../" then it normalized for build dirname
- */
-const (
-	CoinEarn AppSound = "../assets/audios/coin-earn.mp3"
+import (
+	"github.com/pseudoelement/ping-pong/sdk/utils"
 )
 
-var ALL_SOUNDS []AppSound = []AppSound{
+/* ========================================SOUNDS======================================== */
+type AppSoundName string
+
+/**
+ * AppSoundName should start from "../" then it normalized for build dirname
+ */
+const (
+	CoinEarn AppSoundName = "../assets/audios/coin-earn.mp3"
+)
+
+var app_sounds []AppSoundName = []AppSoundName{
 	CoinEarn,
 }
 
-type AppImage string
+/* ========================================IMAGES======================================== */
 
-/**
- * AppSound should start from "../" then it normalized for build dirname
- */
+type AppImageName string
+
+// all image names
 const (
-	SkyBackground AppImage = "../assets/audios/coin-earn.mp3"
+	CosmosBackground AppImageName = "Cosmos"
+	TenisBackground  AppImageName = "Tenis"
 )
 
-var ALL_IMAGES []AppImage = []AppImage{
-	SkyBackground,
+type AppImage struct {
+	/**
+	 * Href should start from "../" then it normalized for build dirname
+	 */
+	Href          string
+	Width, Height int32
+	Name          AppImageName
 }
+
+type ImageFactory func(windowWidth, windowHeight int32) AppImage
+
+func _imageCosmosBackground(windowWidth, windowHeight int32) AppImage {
+	return AppImage{
+		Href:   "../assets/images/cosmos-bg.png",
+		Width:  windowWidth,
+		Height: windowHeight,
+		Name:   CosmosBackground,
+	}
+}
+
+func _imageTenisBackground(windowWidth, windowHeight int32) AppImage {
+	return AppImage{
+		Href:   "../assets/images/tenis-bg.png",
+		Width:  windowWidth,
+		Height: windowHeight,
+		Name:   TenisBackground,
+	}
+}
+
+var app_background_factories []ImageFactory = []ImageFactory{
+	_imageCosmosBackground,
+	_imageTenisBackground,
+}
+
+var app_image_factories []ImageFactory = utils.MergeSlices([][]ImageFactory{app_background_factories})

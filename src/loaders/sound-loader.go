@@ -8,30 +8,33 @@ import (
 )
 
 type SoundLoader struct {
-	sounds map[AppSound]rl.Sound
+	sounds map[AppSoundName]rl.Sound
 }
 
 func NewSoundLoader() *SoundLoader {
-	loader := &SoundLoader{sounds: make(map[AppSound]rl.Sound)}
+	loader := &SoundLoader{sounds: make(map[AppSoundName]rl.Sound)}
 	loader._load()
 	return loader
 }
 
-func (sl *SoundLoader) GetSound(soundName AppSound) (rl.Sound, bool) {
-	sound, ok := sl.sounds[soundName]
-	return sound, ok
+func (sl *SoundLoader) GetSound(soundName AppSoundName) rl.Sound {
+	return sl.sounds[soundName]
 }
 
 func (sl *SoundLoader) _load() {
 	var wg sync.WaitGroup
-	wg.Add(len(ALL_SOUNDS))
+	var mu sync.Mutex
+	wg.Add(len(app_sounds))
 
-	for _, soundPath := range ALL_SOUNDS {
+	for _, soundPath := range app_sounds {
 		go func() {
 			defer wg.Done()
 			path := utils.AppPath(soundPath)
 			sound := rl.LoadSound(path.Normalize())
+
+			mu.Lock()
 			sl.sounds[soundPath] = sound
+			mu.Unlock()
 		}()
 	}
 

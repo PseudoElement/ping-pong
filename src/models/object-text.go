@@ -1,6 +1,7 @@
 package models
 
 import (
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
@@ -63,7 +64,8 @@ func (to *TextObject) FontSize() int32 {
 }
 
 func (to *TextObject) Width() int32 {
-	return int32((float64(to.FontSize()) / 1.75)) * int32(len(to.Value()))
+	return rl.MeasureText(to.value, to.fontSize)
+	// return int32((float64(to.FontSize()) / 1.75)) * int32(len(to.Value()))
 }
 
 func (to *TextObject) Height() int32 {

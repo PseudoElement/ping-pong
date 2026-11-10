@@ -41,6 +41,10 @@ func (i *Injector) SoundLoader() interfaces.ISoundLoader {
 	return i.soundLoader
 }
 
+func (i *Injector) ImageLoader() interfaces.IImageLoader {
+	return i.imageLoader
+}
+
 func (i *Injector) EventManager() interfaces.IEventManager {
 	return i.eventManager
 }
