@@ -2,39 +2,17 @@ package styles
 
 import (
 	"image/color"
-
-	"github.com/pseudoelement/ping-pong/sdk/models"
 )
 
-type EmptyTextObject struct {
+type ObjectStyles struct {
+	Color  color.RGBA
+	ZIndex int16
 }
 
-func (eto *EmptyTextObject) Coords() models.Coords {
-	return models.Coords{}
-}
-func (eto *EmptyTextObject) FontSize() int32 {
-	return 0
-}
-func (eto *EmptyTextObject) Value() string {
-	return ""
-}
-func (eto *EmptyTextObject) SetCoords(models.Coords) {}
-func (eto *EmptyTextObject) Width() int32 {
-	return 0
-}
-func (eto *EmptyTextObject) Height() int32 {
-	return eto.FontSize()
-}
-func (eto *EmptyTextObject) Color() color.RGBA {
-	return color.RGBA{}
+func (os *ObjectStyles) SetColor(newColor color.RGBA) {
+	os.Color = newColor
 }
 
-type ITextObject interface {
-	Coords() models.Coords
-	SetCoords(models.Coords)
-	FontSize() int32
-	Color() color.RGBA
-	Width() int32
-	Height() int32
-	Value() string
+func (os *ObjectStyles) SetZIndex(zIndex int16) {
+	os.ZIndex = zIndex
 }

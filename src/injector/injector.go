@@ -7,6 +7,7 @@ import (
 
 type Injector struct {
 	soundLoader  interfaces.ISoundLoader
+	imageLoader  interfaces.IImageLoader
 	eventManager interfaces.IEventManager
 	renderer     interfaces.IRenderer
 	gameSettings *settings.GameSettings
@@ -18,6 +19,10 @@ func NewInjector() *Injector {
 
 func (i *Injector) SetSoundLoader(soundLoader interfaces.ISoundLoader) {
 	i.soundLoader = soundLoader
+}
+
+func (i *Injector) SetImageLoader(imageLoader interfaces.IImageLoader) {
+	i.imageLoader = imageLoader
 }
 
 func (i *Injector) SetEventManager(eventManager interfaces.IEventManager) {

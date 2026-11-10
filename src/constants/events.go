@@ -17,3 +17,7 @@ type KeyPressedEvent struct {
 	/* int value from raylib-go lib */
 	KeyCode int32
 }
+
+type FpsToggleEvent struct {
+	ShowFps bool
+}

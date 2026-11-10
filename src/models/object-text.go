@@ -1,18 +1,17 @@
 package models
 
 import (
-	"image/color"
-
 	"github.com/pseudoelement/ping-pong/sdk/models"
+	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type TextObjectStructParams struct {
+	Styles        *styles.ObjectStyles
 	InitialValue  string
 	FontSize      int32
-	Color         color.RGBA
 	InitialCoords models.Coords
 	Id            string
 }
@@ -30,7 +29,7 @@ func NewTextObject(p TextObjectStructParams, injector *injector.Injector) *TextO
 	return &TextObject{
 		BaseObject: NewBaseObject(
 			BaseObjectStructParams{
-				Color:         p.Color,
+				Styles:        p.Styles,
 				InitialCoords: p.InitialCoords,
 				Kind:          constants.KindText,
 				Id:            p.Id,

@@ -5,6 +5,7 @@ import (
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/models"
+	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
@@ -52,7 +53,7 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Play with bot",
 			FontSize:      24,
-			Color:         rl.Black,
+			Styles:        &styles.ObjectStyles{Color: rl.Black},
 			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50},
 		},
 		sm.injector,
@@ -61,8 +62,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Play with player",
 			FontSize:      24,
-			Color:         rl.Black,
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 30},
+			Styles:        &styles.ObjectStyles{Color: rl.Black},
+			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 40},
 		},
 		sm.injector,
 	)
@@ -70,8 +71,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Game settings",
 			FontSize:      24,
-			Color:         rl.Black,
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 60},
+			Styles:        &styles.ObjectStyles{Color: rl.Black},
+			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 80},
 		},
 		sm.injector,
 	)
@@ -79,8 +80,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Exit",
 			FontSize:      24,
-			Color:         rl.Black,
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 90},
+			Styles:        &styles.ObjectStyles{Color: rl.Black},
+			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 120},
 		},
 		sm.injector,
 	)
@@ -165,11 +166,12 @@ func _mouseMoveEventHandler(
 	for _, textObj := range textObjects {
 		if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 			textObj.SetHover(true)
-			textObj.SetColor(rl.Red)
+			textObj.Styles().SetColor(rl.Red)
 			objHovered = true
 		} else {
 			if textObj.IsHovered() {
-				textObj.SetColor(rl.Black)
+				textObj.SetHover(false)
+				textObj.Styles().SetColor(rl.Black)
 			}
 		}
 	}

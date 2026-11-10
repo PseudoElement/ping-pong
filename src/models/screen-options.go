@@ -3,6 +3,7 @@ package models
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/models"
+	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
@@ -50,7 +51,7 @@ func (so *ScreenOptions) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Toggle FPS counter",
 			FontSize:      24,
-			Color:         rl.Black,
+			Styles:        &styles.ObjectStyles{Color: rl.Black},
 			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50},
 		},
 		so.injector,
@@ -59,8 +60,8 @@ func (so *ScreenOptions) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Back",
 			FontSize:      24,
-			Color:         rl.Black,
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 30},
+			Styles:        &styles.ObjectStyles{Color: rl.Black},
+			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 40},
 		},
 		so.injector,
 	)
@@ -90,6 +91,9 @@ func _toggleFpsBtnEventHandler(
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			injector.GameSettings().SetShowFps(!injector.GameSettings().ShowFps)
+			injector.EventManager().FpsToggleEventEmitter().Emit(constants.FpsToggleEvent{
+				ShowFps: injector.GameSettings().ShowFps,
+			})
 		}
 	}
 }

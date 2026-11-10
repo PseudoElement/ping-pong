@@ -24,11 +24,18 @@ type ISoundLoader interface {
 	GetSound(soundName loaders.AppSound) (rl.Sound, bool)
 }
 
+type IImageLoader interface {
+	GetImage(imgName loaders.AppImage) (*rl.Image, bool)
+}
+
 type IEventManager interface {
 	MouseClickEventEmitter() *models.EventEmitter[constants.MouseClickEvent]
 	MouseMoveEventEmitter() *models.EventEmitter[constants.MouseMoveEvent]
 	KeyboardEventEmitter() *models.EventEmitter[constants.KeyPressedEvent]
-	UseEventHandlers()
+
+	FpsToggleEventEmitter() *models.EventEmitter[constants.FpsToggleEvent]
+
+	UseUserInputHandlers()
 }
 
 type IRenderer interface {

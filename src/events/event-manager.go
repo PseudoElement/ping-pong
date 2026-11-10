@@ -4,13 +4,17 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/src/constants"
+	"github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type EventManager struct {
 	mouseClickEventEmitter *models.EventEmitter[constants.MouseClickEvent]
 	mouseMoveEventEmitter  *models.EventEmitter[constants.MouseMoveEvent]
 	keyboardEventEmitter   *models.EventEmitter[constants.KeyPressedEvent]
+	fpsToggleEventEmitter  *models.EventEmitter[constants.FpsToggleEvent]
 }
+
+var _ interfaces.IEventManager = (*EventManager)(nil)
 
 func NewEventManager() *EventManager {
 	rl.GetMouseX()
@@ -18,6 +22,7 @@ func NewEventManager() *EventManager {
 		mouseClickEventEmitter: models.NewEventEmitter(constants.MouseClickEvent{}),
 		mouseMoveEventEmitter:  models.NewEventEmitter(constants.MouseMoveEvent{}),
 		keyboardEventEmitter:   models.NewEventEmitter(constants.KeyPressedEvent{}),
+		fpsToggleEventEmitter:  models.NewEventEmitter(constants.FpsToggleEvent{}),
 	}
 }
 
@@ -33,7 +38,11 @@ func (em *EventManager) KeyboardEventEmitter() *models.EventEmitter[constants.Ke
 	return em.keyboardEventEmitter
 }
 
-func (em *EventManager) UseEventHandlers() {
+func (em *EventManager) FpsToggleEventEmitter() *models.EventEmitter[constants.FpsToggleEvent] {
+	return em.fpsToggleEventEmitter
+}
+
+func (em *EventManager) UseUserInputHandlers() {
 	/* MOUSE EVENTS */
 	if rl.IsMouseButtonPressed(rl.MouseLeftButton) {
 		em.mouseClickEventEmitter.Emit(constants.MouseClickEvent{

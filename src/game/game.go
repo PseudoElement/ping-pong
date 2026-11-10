@@ -39,15 +39,17 @@ func (g *Game) Start() {
 
 	rl.InitAudioDevice()
 	rl.InitWindow(windowWidth, windowHeight, "PingPong(raylib)")
-	rl.SetTargetFPS(60)
+	rl.SetTargetFPS(120)
 
 	eventManager := events.NewEventManager()
 	soundLoader := loaders.NewSoundLoader()
+	imageLoader := loaders.NewImageLoader()
 	gameSettings := settings.NewGameSettings()
 	renderer := NewRenderer(g.injector)
 
 	g.injector.SetEventManager(eventManager)
 	g.injector.SetSoundLoader(soundLoader)
+	g.injector.SetImageLoader(imageLoader)
 	g.injector.SetGameSettings(gameSettings)
 	g.injector.SetRenderer(renderer)
 
@@ -56,7 +58,7 @@ func (g *Game) Start() {
 	g.injector.GameSettings().SetWindowWidth(windowWidth)
 
 	renderer.SetScreen(models.NewScreenMenu(g.injector))
-	renderer.setStaticObjects()
+	renderer.init()
 
 	var frameCount int32 = 1
 	fpsFn := func() {
@@ -65,15 +67,10 @@ func (g *Game) Start() {
 	}
 	utils.Interval(context.Background(), fpsFn, 1*time.Second)
 
-	// imgPath := utils.AppPath("../assets/images/pad.png")
-	// img := rl.LoadImage(imgPath.Normalize())
-	// texture := rl.LoadTextureFromImage(img)
-
 	for !rl.WindowShouldClose() {
 		frameCount++
-		// rl.DrawTexture(texture, 100, 100, rl.White)
 		rl.ClearBackground(rl.White)
-		eventManager.UseEventHandlers()
+		eventManager.UseUserInputHandlers()
 		renderer.Render()
 	}
 

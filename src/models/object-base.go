@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pseudoelement/ping-pong/sdk/models"
+	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/interfaces"
@@ -15,15 +16,17 @@ type BaseObject struct {
 
 	id       string
 	coords   models.Coords
+	styles   *styles.ObjectStyles
 	color    color.RGBA
 	children []interfaces.IBaseObject
 	kind     constants.ObjectKind
+	zIndex   int16
 }
 
 var _ interfaces.IBaseObject = (*BaseObject)(nil)
 
 type BaseObjectStructParams struct {
-	Color         color.RGBA
+	Styles        *styles.ObjectStyles
 	InitialCoords models.Coords
 	Kind          constants.ObjectKind
 	Id            string
@@ -41,13 +44,16 @@ func NewBaseObject(p BaseObjectStructParams, injector *injector.Injector) *BaseO
 		children: make([]interfaces.IBaseObject, 0),
 		id:       id,
 		coords:   p.InitialCoords,
-		color:    p.Color,
-		kind:     p.Kind,
+		styles:   p.Styles,
 	}
 }
 
 func (bo *BaseObject) Injector() interfaces.IInjector {
 	return bo.injector
+}
+
+func (bo *BaseObject) Styles() *styles.ObjectStyles {
+	return bo.styles
 }
 
 func (bo *BaseObject) Kind() constants.ObjectKind {
