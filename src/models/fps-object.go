@@ -1,23 +1,22 @@
-package ui
+package models
 
 import (
 	"fmt"
 
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/interfaces"
-	"github.com/pseudoelement/ping-pong/src/models"
 )
 
 type FpsObject struct {
-	*models.TextObject
+	*TextObject
 }
 
 var _ interfaces.ITextObject = (*FpsObject)(nil)
 var _ interfaces.IUpdateable = (*FpsObject)(nil)
 
-func NewFpsObject(p models.TextObjectStructParams, injector *injector.Injector) *FpsObject {
+func NewFpsObject(p TextObjectStructParams, injector *injector.Injector) *FpsObject {
 	return &FpsObject{
-		TextObject: models.NewTextObject(p, injector),
+		TextObject: NewTextObject(p, injector),
 	}
 }
 

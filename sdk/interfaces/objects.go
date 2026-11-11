@@ -3,46 +3,51 @@ package interfaces
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
 )
 
 type IBaseObject interface {
 	Coords() models.Coords
-	SetCoords(models.Coords)
+	SetCoords(coords models.Coords)
 
 	Id() string
 	Kind() constants.ObjectKind
-	Styles() *styles.ObjectStyles
+	Styles() *models.ObjectStyles
 
 	Move(dX, dY int32)
-	AppendChild(IBaseObject)
+	AppendChild(child IBaseObject)
 	GetChildByID(id string) (IBaseObject, bool)
 
 	Injector() IInjector
 	Children() []IBaseObject
 }
 
-type ITextObject interface {
+type IObjectWithWidthAndHeight interface {
 	IBaseObject
+
+	Width() int32
+	Height() int32
+}
+
+type ITextObject interface {
+	IObjectWithWidthAndHeight
 	IHoverable
 
 	Value() string
-	SetValue(string)
+	SetValue(val string)
 
 	FontSize() int32
-	Width() int32
-	Height() int32
 }
 
 type IImageObject interface {
-	IBaseObject
+	IObjectWithWidthAndHeight
 
 	Texture() rl.Texture2D
-	Width() int32
-	Height() int32
 }
 
 type IRectangleObject interface {
-	IBaseObject
+	IObjectWithWidthAndHeight
+
+	SetWidth(width int32)
+	SetHeight(height int32)
 }

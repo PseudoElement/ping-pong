@@ -1,7 +1,7 @@
 package injector
 
 import (
-	"github.com/pseudoelement/ping-pong/src/interfaces"
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/src/settings"
 )
 

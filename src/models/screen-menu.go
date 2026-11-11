@@ -4,18 +4,18 @@ import (
 	"os"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type ScreenMenu struct {
 	injector        *injector.Injector
 	textObjectsPool []interfaces.ITextObject
-	rectObjectsPool []interfaces.IBaseObject
+	rectObjectsPool []interfaces.IRectangleObject
 	unsubs          []models.UnsubscribeFn
 }
 
@@ -25,7 +25,7 @@ func NewScreenMenu(injector *injector.Injector) *ScreenMenu {
 	screen := &ScreenMenu{
 		injector:        injector,
 		textObjectsPool: make([]interfaces.ITextObject, 0),
-		rectObjectsPool: make([]interfaces.IBaseObject, 0),
+		rectObjectsPool: make([]interfaces.IRectangleObject, 0),
 	}
 	screen._init()
 	return screen
@@ -35,7 +35,7 @@ func (sm *ScreenMenu) TextObjects() []interfaces.ITextObject {
 	return sm.textObjectsPool
 }
 
-func (sm *ScreenMenu) RectObjects() []interfaces.IBaseObject {
+func (sm *ScreenMenu) RectObjects() []interfaces.IRectangleObject {
 	return sm.rectObjectsPool
 }
 
@@ -49,12 +49,25 @@ func (sm *ScreenMenu) _init() {
 	windowWidth := sm.injector.GameSettings().WindowWidth
 	windowHeight := sm.injector.GameSettings().WindowHeight
 
+	wrapper := NewRectangleObject(
+		RectangleObjectStructParams{
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight / 2},
+			Width:         400,
+			Height:        400,
+			Styles: &models.ObjectStyles{
+				Color:        constants.ColorTransparentBlue,
+				ZIndex:       1,
+				BorderRadius: 0.3,
+			},
+		},
+		sm.injector,
+	)
 	playWithBotBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Play with bot",
 			FontSize:      24,
-			Styles:        &styles.ObjectStyles{Color: rl.Black},
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50},
+			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 		},
 		sm.injector,
 	)
@@ -62,8 +75,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Play with player",
 			FontSize:      24,
-			Styles:        &styles.ObjectStyles{Color: rl.Black},
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 40},
+			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
 		},
 		sm.injector,
 	)
@@ -71,8 +84,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Game settings",
 			FontSize:      24,
-			Styles:        &styles.ObjectStyles{Color: rl.Black},
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 80},
+			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
 		},
 		sm.injector,
 	)
@@ -80,11 +93,17 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Exit",
 			FontSize:      24,
-			Styles:        &styles.ObjectStyles{Color: rl.Black},
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 120},
+			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 120},
 		},
 		sm.injector,
 	)
+
+	styles.StyleTranslate(wrapper, -0.5, -0.5)
+	styles.StyleTranslate(playWithBotBtn, -0.5, -3)
+	styles.StyleTranslate(playWithPlayerBtn, -0.5, -3)
+	styles.StyleTranslate(optionsBtn, -0.5, -3)
+	styles.StyleTranslate(exitBtn, -0.5, -3)
 
 	mouseClickEventUnsubFn := sm.injector.EventManager().
 		MouseClickEventEmitter().
@@ -102,6 +121,7 @@ func (sm *ScreenMenu) _init() {
 
 	sm.unsubs = append(sm.unsubs, mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
 	sm.textObjectsPool = append(sm.textObjectsPool, playWithBotBtn, playWithPlayerBtn, optionsBtn, exitBtn)
+	sm.rectObjectsPool = append(sm.rectObjectsPool, wrapper)
 }
 
 func _playWithBotBtnEventHandler(
@@ -112,6 +132,7 @@ func _playWithBotBtnEventHandler(
 	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
+			injector.Renderer().CurrentScreen().OnDestroy()
 			injector.Renderer().SetScreen(NewScreenGame(injector))
 		}
 	}

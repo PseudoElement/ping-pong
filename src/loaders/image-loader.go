@@ -21,7 +21,7 @@ func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 	return loader
 }
 
-func (il *ImageLoader) GetImage(imgName AppImageName) rl.Texture2D {
+func (il *ImageLoader) GetTexture(imgName AppImageName) rl.Texture2D {
 	return il.textures[imgName]
 }
 

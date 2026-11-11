@@ -4,19 +4,19 @@ import (
 	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/interfaces"
 	"github.com/pseudoelement/ping-pong/src/loaders"
 )
 
 type ScreenOptions struct {
 	injector        *injector.Injector
 	textObjectsPool []interfaces.ITextObject
-	rectObjectsPool []interfaces.IBaseObject
+	rectObjectsPool []interfaces.IRectangleObject
 	unsubs          []models.UnsubscribeFn
 }
 
@@ -26,7 +26,7 @@ func NewScreenOptions(injector *injector.Injector) *ScreenOptions {
 	screen := &ScreenOptions{
 		injector:        injector,
 		textObjectsPool: make([]interfaces.ITextObject, 0),
-		rectObjectsPool: make([]interfaces.IBaseObject, 0),
+		rectObjectsPool: make([]interfaces.IRectangleObject, 0),
 	}
 	screen._init()
 	return screen
@@ -36,7 +36,7 @@ func (so *ScreenOptions) TextObjects() []interfaces.ITextObject {
 	return so.textObjectsPool
 }
 
-func (so *ScreenOptions) RectObjects() []interfaces.IBaseObject {
+func (so *ScreenOptions) RectObjects() []interfaces.IRectangleObject {
 	return so.rectObjectsPool
 }
 
@@ -52,12 +52,25 @@ func (so *ScreenOptions) _init() {
 	mainBgCode := so.injector.GameSettings().MainBackground
 	bgImg, _ := so.injector.ImageLoader().GetAppBackground(mainBgCode)
 
+	wrapper := NewRectangleObject(
+		RectangleObjectStructParams{
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight / 2},
+			Width:         400,
+			Height:        400,
+			Styles: &models.ObjectStyles{
+				Color:        constants.ColorTransparentBlue,
+				ZIndex:       1,
+				BorderRadius: 0.3,
+			},
+		},
+		so.injector,
+	)
 	toggleFpsBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Toggle FPS counter",
 			FontSize:      24,
-			Styles:        &styles.ObjectStyles{Color: rl.Black},
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50},
+			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 		},
 		so.injector,
 	)
@@ -65,8 +78,8 @@ func (so *ScreenOptions) _init() {
 		TextObjectStructParams{
 			InitialValue:  fmt.Sprintf("Change theme: <%s>\n", bgImg.Name),
 			FontSize:      24,
-			Styles:        &styles.ObjectStyles{Color: rl.Black},
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 40},
+			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
 			Id:            "change-bg-btn-id",
 		},
 		so.injector,
@@ -75,11 +88,16 @@ func (so *ScreenOptions) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Back",
 			FontSize:      24,
-			Styles:        &styles.ObjectStyles{Color: rl.Black},
-			InitialCoords: models.Coords{X: windowWidth/2 - 50, Y: windowHeight/2 - 50 + 80},
+			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
 		},
 		so.injector,
 	)
+
+	styles.StyleTranslate(wrapper, -0.5, -0.5)
+	styles.StyleTranslate(toggleFpsBtn, -0.5, -2)
+	styles.StyleTranslate(changeBackgroundBtn, -0.5, -2)
+	styles.StyleTranslate(backBtn, -0.5, -2)
 
 	mouseClickEventUnsubFn := so.injector.EventManager().
 		MouseClickEventEmitter().
@@ -96,6 +114,7 @@ func (so *ScreenOptions) _init() {
 
 	so.unsubs = append(so.unsubs, mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
 	so.textObjectsPool = append(so.textObjectsPool, toggleFpsBtn, changeBackgroundBtn, backBtn)
+	so.rectObjectsPool = append(so.rectObjectsPool, wrapper)
 }
 
 func _toggleFpsBtnEventHandler(

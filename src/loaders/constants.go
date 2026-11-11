@@ -26,6 +26,7 @@ type AppImageName string
 const (
 	CosmosBackground AppImageName = "Cosmos"
 	TenisBackground  AppImageName = "Tenis"
+	HockeyBackground AppImageName = "Hockey"
 )
 
 type AppImage struct {
@@ -57,9 +58,19 @@ func _imageTenisBackground(windowWidth, windowHeight int32) AppImage {
 	}
 }
 
+func _imageHockeyBackground(windowWidth, windowHeight int32) AppImage {
+	return AppImage{
+		Href:   "../assets/images/hockey-bg.png",
+		Width:  windowWidth,
+		Height: windowHeight,
+		Name:   HockeyBackground,
+	}
+}
+
 var app_background_factories []ImageFactory = []ImageFactory{
 	_imageCosmosBackground,
 	_imageTenisBackground,
+	_imageHockeyBackground,
 }
 
 var app_image_factories []ImageFactory = utils.MergeSlices([][]ImageFactory{app_background_factories})

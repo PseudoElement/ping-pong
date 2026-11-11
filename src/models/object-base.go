@@ -4,11 +4,10 @@ import (
 	"image/color"
 
 	"github.com/google/uuid"
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type BaseObject struct {
@@ -16,7 +15,7 @@ type BaseObject struct {
 
 	id       string
 	coords   models.Coords
-	styles   *styles.ObjectStyles
+	styles   *models.ObjectStyles
 	color    color.RGBA
 	children []interfaces.IBaseObject
 	kind     constants.ObjectKind
@@ -26,7 +25,7 @@ type BaseObject struct {
 var _ interfaces.IBaseObject = (*BaseObject)(nil)
 
 type BaseObjectStructParams struct {
-	Styles        *styles.ObjectStyles
+	Styles        *models.ObjectStyles
 	InitialCoords models.Coords
 	Kind          constants.ObjectKind
 	Id            string
@@ -52,7 +51,7 @@ func (bo *BaseObject) Injector() interfaces.IInjector {
 	return bo.injector
 }
 
-func (bo *BaseObject) Styles() *styles.ObjectStyles {
+func (bo *BaseObject) Styles() *models.ObjectStyles {
 	return bo.styles
 }
 

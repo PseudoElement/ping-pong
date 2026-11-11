@@ -1,18 +1,17 @@
 package game
 
 import (
+	"cmp"
 	"math"
 	"slices"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	sdkmodels "github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/interfaces"
 	"github.com/pseudoelement/ping-pong/src/loaders"
 	"github.com/pseudoelement/ping-pong/src/models"
-	"github.com/pseudoelement/ping-pong/src/models/ui"
 )
 
 type Renderer struct {
@@ -52,7 +51,7 @@ func (r *Renderer) Render() {
 	}
 
 	slices.SortFunc(allObjects, func(prev, next interfaces.IBaseObject) int {
-		return int(next.Styles().ZIndex - prev.Styles().ZIndex)
+		return cmp.Compare(prev.Styles().ZIndex, next.Styles().ZIndex)
 	})
 
 	for _, obj := range allObjects {
@@ -78,11 +77,16 @@ func (r *Renderer) Render() {
 				rl.White,
 			)
 		case interfaces.IRectangleObject:
-			rl.DrawRectangle(
-				typedObj.Coords().X,
-				typedObj.Coords().Y,
-				100,
-				100,
+			rectangle := rl.Rectangle{
+				X:      float32(typedObj.Coords().X),
+				Y:      float32(typedObj.Coords().Y),
+				Width:  float32(typedObj.Width()),
+				Height: float32(typedObj.Height()),
+			}
+			rl.DrawRectangleRounded(
+				rectangle,
+				typedObj.Styles().BorderRadius,
+				1,
 				typedObj.Styles().Color,
 			)
 		}
@@ -119,11 +123,11 @@ func (r *Renderer) _setStaticObjects() {
 	settings := r.injector.GameSettings()
 	imgLoader := r.injector.ImageLoader()
 
-	fpsObject := ui.NewFpsObject(
+	fpsObject := models.NewFpsObject(
 		models.TextObjectStructParams{
 			InitialValue:  "0 FPS",
 			FontSize:      32,
-			Styles:        &styles.ObjectStyles{Color: rl.Green, ZIndex: math.MaxInt16},
+			Styles:        &sdkmodels.ObjectStyles{Color: rl.Red, ZIndex: math.MaxInt16},
 			InitialCoords: sdkmodels.Coords{X: 10, Y: 5},
 			Id:            FpsObjectId,
 		},
@@ -131,9 +135,9 @@ func (r *Renderer) _setStaticObjects() {
 	)
 	appBackgroundObject := models.NewImageObject(
 		models.ImageObjectStructParams{
-			Styles:        &styles.ObjectStyles{ZIndex: math.MinInt16},
+			Styles:        &sdkmodels.ObjectStyles{ZIndex: 0},
 			InitialCoords: sdkmodels.Coords{X: 0, Y: 0},
-			Texture:       imgLoader.GetImage(settings.MainBackground),
+			Texture:       imgLoader.GetTexture(settings.MainBackground),
 			Id:            MainBgObjectId,
 		},
 		r.injector,
@@ -147,11 +151,11 @@ func _fpsToggleEventHandler(
 	renderer *Renderer,
 ) {
 	if event.ShowFps {
-		fpsObject := ui.NewFpsObject(
+		fpsObject := models.NewFpsObject(
 			models.TextObjectStructParams{
 				InitialValue:  "0 FPS",
 				FontSize:      32,
-				Styles:        &styles.ObjectStyles{Color: rl.Green, ZIndex: math.MaxInt16},
+				Styles:        &sdkmodels.ObjectStyles{Color: rl.Red, ZIndex: math.MaxInt16},
 				InitialCoords: sdkmodels.Coords{X: 10, Y: 5},
 				Id:            FpsObjectId,
 			},
@@ -181,9 +185,9 @@ func _backgroundChangeEventHandler(
 		if obj.Id() == MainBgObjectId {
 			obj = models.NewImageObject(
 				models.ImageObjectStructParams{
-					Styles:        &styles.ObjectStyles{ZIndex: math.MinInt16},
+					Styles:        &sdkmodels.ObjectStyles{ZIndex: 0},
 					InitialCoords: sdkmodels.Coords{X: 0, Y: 0},
-					Texture:       imgLoader.GetImage(loaders.AppImageName(event.Name)),
+					Texture:       imgLoader.GetTexture(loaders.AppImageName(event.Name)),
 					Id:            MainBgObjectId,
 				},
 				renderer.injector,

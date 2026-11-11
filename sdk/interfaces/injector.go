@@ -26,7 +26,7 @@ type ISoundLoader interface {
 }
 
 type IImageLoader interface {
-	GetImage(imgName loaders.AppImageName) rl.Texture2D
+	GetTexture(imgName loaders.AppImageName) rl.Texture2D
 	GetAppBackgrounds() []loaders.AppImage
 	GetAppBackground(bgName loaders.AppImageName) (loaders.AppImage, bool)
 }
