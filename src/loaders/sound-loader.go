@@ -4,20 +4,21 @@ import (
 	"sync"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 )
 
 type SoundLoader struct {
-	sounds map[AppSoundName]rl.Sound
+	sounds map[constants.AppSoundName]rl.Sound
 }
 
 func NewSoundLoader() *SoundLoader {
-	loader := &SoundLoader{sounds: make(map[AppSoundName]rl.Sound)}
+	loader := &SoundLoader{sounds: make(map[constants.AppSoundName]rl.Sound)}
 	loader._load()
 	return loader
 }
 
-func (sl *SoundLoader) GetSound(soundName AppSoundName) rl.Sound {
+func (sl *SoundLoader) GetSound(soundName constants.AppSoundName) rl.Sound {
 	return sl.sounds[soundName]
 }
 

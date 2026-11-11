@@ -4,9 +4,9 @@ import (
 	"image/color"
 
 	"github.com/google/uuid"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 )
 
@@ -14,8 +14,8 @@ type BaseObject struct {
 	injector *injector.Injector
 
 	id       string
-	coords   models.Coords
-	styles   *models.ObjectStyles
+	coords   common.Coords
+	styles   *common.ObjectStyles
 	color    color.RGBA
 	children []interfaces.IBaseObject
 	kind     constants.ObjectKind
@@ -25,8 +25,8 @@ type BaseObject struct {
 var _ interfaces.IBaseObject = (*BaseObject)(nil)
 
 type BaseObjectStructParams struct {
-	Styles        *models.ObjectStyles
-	InitialCoords models.Coords
+	Styles        *common.ObjectStyles
+	InitialCoords common.Coords
 	Kind          constants.ObjectKind
 	Id            string
 }
@@ -51,7 +51,7 @@ func (bo *BaseObject) Injector() interfaces.IInjector {
 	return bo.injector
 }
 
-func (bo *BaseObject) Styles() *models.ObjectStyles {
+func (bo *BaseObject) Styles() *common.ObjectStyles {
 	return bo.styles
 }
 
@@ -59,11 +59,11 @@ func (bo *BaseObject) Kind() constants.ObjectKind {
 	return bo.kind
 }
 
-func (bo *BaseObject) Coords() models.Coords {
+func (bo *BaseObject) Coords() common.Coords {
 	return bo.coords
 }
 
-func (bo *BaseObject) SetCoords(newCoords models.Coords) {
+func (bo *BaseObject) SetCoords(newCoords common.Coords) {
 	prevCoords := bo.coords
 	bo.coords = newCoords
 

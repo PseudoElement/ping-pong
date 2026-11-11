@@ -2,7 +2,6 @@ package injector
 
 import (
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/src/settings"
 )
 
 type Injector struct {
@@ -10,7 +9,7 @@ type Injector struct {
 	imageLoader  interfaces.IImageLoader
 	eventManager interfaces.IEventManager
 	renderer     interfaces.IRenderer
-	gameSettings *settings.GameSettings
+	gameSettings interfaces.IGameSettings
 }
 
 func NewInjector() *Injector {
@@ -29,7 +28,7 @@ func (i *Injector) SetEventManager(eventManager interfaces.IEventManager) {
 	i.eventManager = eventManager
 }
 
-func (i *Injector) SetGameSettings(gameSettings *settings.GameSettings) {
+func (i *Injector) SetGameSettings(gameSettings interfaces.IGameSettings) {
 	i.gameSettings = gameSettings
 }
 
@@ -49,7 +48,7 @@ func (i *Injector) EventManager() interfaces.IEventManager {
 	return i.eventManager
 }
 
-func (i *Injector) GameSettings() *settings.GameSettings {
+func (i *Injector) GameSettings() interfaces.IGameSettings {
 	return i.gameSettings
 }
 

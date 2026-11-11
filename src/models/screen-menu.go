@@ -4,11 +4,11 @@ import (
 	"os"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
-	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 )
 
@@ -16,7 +16,7 @@ type ScreenMenu struct {
 	injector        *injector.Injector
 	textObjectsPool []interfaces.ITextObject
 	rectObjectsPool []interfaces.IRectangleObject
-	unsubs          []models.UnsubscribeFn
+	unsubs          []common.UnsubscribeFn
 }
 
 var _ interfaces.IScreen = (*ScreenMenu)(nil)
@@ -39,6 +39,10 @@ func (sm *ScreenMenu) RectObjects() []interfaces.IRectangleObject {
 	return sm.rectObjectsPool
 }
 
+func (sm *ScreenMenu) ImageObjects() []interfaces.IImageObject {
+	return []interfaces.IImageObject{}
+}
+
 func (sm *ScreenMenu) OnDestroy() {
 	for _, unsubFn := range sm.unsubs {
 		unsubFn()
@@ -46,15 +50,15 @@ func (sm *ScreenMenu) OnDestroy() {
 }
 
 func (sm *ScreenMenu) _init() {
-	windowWidth := sm.injector.GameSettings().WindowWidth
-	windowHeight := sm.injector.GameSettings().WindowHeight
+	windowWidth := sm.injector.GameSettings().WindowWidth()
+	windowHeight := sm.injector.GameSettings().WindowHeight()
 
 	wrapper := NewRectangleObject(
 		RectangleObjectStructParams{
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight / 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 			Width:         400,
 			Height:        400,
-			Styles: &models.ObjectStyles{
+			Styles: &common.ObjectStyles{
 				Color:        constants.ColorTransparentBlue,
 				ZIndex:       1,
 				BorderRadius: 0.3,
@@ -66,8 +70,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Play with bot",
 			FontSize:      24,
-			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight / 2},
+			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 		},
 		sm.injector,
 	)
@@ -75,8 +79,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Play with player",
 			FontSize:      24,
-			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
+			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
 		},
 		sm.injector,
 	)
@@ -84,8 +88,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Game settings",
 			FontSize:      24,
-			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
+			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
 		},
 		sm.injector,
 	)
@@ -93,8 +97,8 @@ func (sm *ScreenMenu) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Exit",
 			FontSize:      24,
-			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 120},
+			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 120},
 		},
 		sm.injector,
 	)
@@ -129,7 +133,7 @@ func _playWithBotBtnEventHandler(
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
-	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			injector.Renderer().CurrentScreen().OnDestroy()
@@ -143,7 +147,7 @@ func _playWithPlayerBtnEventHandler(
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
-	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			injector.Renderer().CurrentScreen().OnDestroy()
@@ -157,7 +161,7 @@ func _optionsBtnEventHandler(
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
-	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			injector.Renderer().CurrentScreen().OnDestroy()
@@ -167,7 +171,7 @@ func _optionsBtnEventHandler(
 }
 
 func _exitBtnEventHandler(mouseEvent constants.MouseClickEvent, textObj interfaces.ITextObject) {
-	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			rl.CloseWindow()
@@ -181,7 +185,7 @@ func _mouseMoveEventHandler(
 	textObjects []interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
-	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	objHovered := false
 
 	for _, textObj := range textObjects {

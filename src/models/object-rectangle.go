@@ -1,9 +1,9 @@
 package models
 
 import (
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	sdkmodels "github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 )
 
@@ -19,8 +19,8 @@ var _ interfaces.IRectangleObject = (*RectangleObject)(nil)
 
 type RectangleObjectStructParams struct {
 	Width, Height int32
-	InitialCoords sdkmodels.Coords
-	Styles        *sdkmodels.ObjectStyles
+	InitialCoords common.Coords
+	Styles        *common.ObjectStyles
 	Id            string
 }
 

@@ -2,17 +2,17 @@ package models
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 )
 
 type TextObjectStructParams struct {
-	Styles        *models.ObjectStyles
+	Styles        *common.ObjectStyles
 	InitialValue  string
 	FontSize      int32
-	InitialCoords models.Coords
+	InitialCoords common.Coords
 	Id            string
 }
 

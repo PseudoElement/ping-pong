@@ -1,47 +1,76 @@
 package settings
 
-import "github.com/pseudoelement/ping-pong/src/loaders"
+import (
+	"github.com/pseudoelement/ping-pong/sdk/constants"
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+)
 
 type GameSettings struct {
-	FontSize       int32
-	WindowWidth    int32
-	WindowHeight   int32
-	Fps            int32
-	ShowFps        bool
-	MainBackground loaders.AppImageName
+	fontSize       int32
+	windowWidth    int32
+	windowHeight   int32
+	fps            int32
+	showFps        bool
+	mainBackground constants.AppImageName
 }
+
+var _ interfaces.IGameSettings = (*GameSettings)(nil)
 
 func NewGameSettings() *GameSettings {
 	return &GameSettings{
-		FontSize:       0,
-		WindowWidth:    0,
-		WindowHeight:   0,
-		Fps:            0,
-		ShowFps:        true,
-		MainBackground: loaders.TenisBackground,
+		fontSize:       0,
+		windowWidth:    0,
+		windowHeight:   0,
+		fps:            0,
+		showFps:        true,
+		mainBackground: constants.ImgTenisBackground,
 	}
 }
 
+func (gs *GameSettings) FontSize() int32 {
+	return gs.fontSize
+}
+
 func (gs *GameSettings) SetFontSize(fontSize int32) {
-	gs.FontSize = fontSize
+	gs.fontSize = fontSize
+}
+
+func (gs *GameSettings) WindowWidth() int32 {
+	return gs.windowWidth
 }
 
 func (gs *GameSettings) SetWindowWidth(windowWidth int32) {
-	gs.WindowWidth = windowWidth
+	gs.windowWidth = windowWidth
+}
+
+func (gs *GameSettings) WindowHeight() int32 {
+	return gs.windowHeight
 }
 
 func (gs *GameSettings) SetWindowHeight(windowHeight int32) {
-	gs.WindowHeight = windowHeight
+	gs.windowHeight = windowHeight
+}
+
+func (gs *GameSettings) Fps() int32 {
+	return gs.fps
 }
 
 func (gs *GameSettings) SetFps(fps int32) {
-	gs.Fps = fps
+	gs.fps = fps
+}
+
+func (gs *GameSettings) IsShownFps() bool {
+	return gs.showFps
 }
 
 func (gs *GameSettings) SetShowFps(showFps bool) {
-	gs.ShowFps = showFps
+	gs.showFps = showFps
 }
 
-func (gs *GameSettings) SetMainBackground(bg loaders.AppImageName) {
-	gs.MainBackground = bg
+func (gs *GameSettings) MainBackground() constants.AppImageName {
+	return gs.mainBackground
+}
+
+func (gs *GameSettings) SetMainBackground(bg constants.AppImageName) {
+	gs.mainBackground = bg
 }

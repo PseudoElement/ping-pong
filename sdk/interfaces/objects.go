@@ -2,17 +2,17 @@ package interfaces
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/src/constants"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 )
 
 type IBaseObject interface {
-	Coords() models.Coords
-	SetCoords(coords models.Coords)
+	Coords() common.Coords
+	SetCoords(coords common.Coords)
 
 	Id() string
 	Kind() constants.ObjectKind
-	Styles() *models.ObjectStyles
+	Styles() *common.ObjectStyles
 
 	Move(dX, dY int32)
 	AppendChild(child IBaseObject)

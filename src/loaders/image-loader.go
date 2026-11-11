@@ -2,18 +2,19 @@ package loaders
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 )
 
 type ImageLoader struct {
 	windowWidth  int32
 	windowHeight int32
-	textures     map[AppImageName]rl.Texture2D
+	textures     map[constants.AppImageName]rl.Texture2D
 }
 
 func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 	loader := &ImageLoader{
-		textures:     make(map[AppImageName]rl.Texture2D),
+		textures:     make(map[constants.AppImageName]rl.Texture2D),
 		windowHeight: windowHeight,
 		windowWidth:  windowWidth,
 	}
@@ -21,26 +22,26 @@ func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 	return loader
 }
 
-func (il *ImageLoader) GetTexture(imgName AppImageName) rl.Texture2D {
+func (il *ImageLoader) GetTexture(imgName constants.AppImageName) rl.Texture2D {
 	return il.textures[imgName]
 }
 
-func (il *ImageLoader) GetAppBackgrounds() []AppImage {
-	bgs := make([]AppImage, len(app_background_factories))
+func (il *ImageLoader) GetAppBackgrounds() []constants.AppImage {
+	bgs := make([]constants.AppImage, len(app_background_factories))
 	for idx, bgFactory := range app_background_factories {
 		bgs[idx] = bgFactory(il.windowWidth, il.windowHeight)
 	}
 	return bgs
 }
 
-func (il *ImageLoader) GetAppBackground(bgName AppImageName) (AppImage, bool) {
+func (il *ImageLoader) GetAppBackground(bgName constants.AppImageName) (constants.AppImage, bool) {
 	for _, bgFactory := range app_background_factories {
 		bg := bgFactory(il.windowWidth, il.windowHeight)
 		if bg.Name == bgName {
 			return bg, true
 		}
 	}
-	return AppImage{}, false
+	return constants.AppImage{}, false
 }
 
 func (il *ImageLoader) _load() {

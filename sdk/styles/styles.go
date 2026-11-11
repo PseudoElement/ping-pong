@@ -1,8 +1,8 @@
 package styles
 
 import (
+	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/sdk/models"
 )
 
 func StyleTranslate[T interfaces.IObjectWithWidthAndHeight](
@@ -13,7 +13,7 @@ func StyleTranslate[T interfaces.IObjectWithWidthAndHeight](
 	dX := float32(obj.Width()) * translateX
 	dY := float32(obj.Height()) * translateY
 
-	obj.SetCoords(models.Coords{
+	obj.SetCoords(common.Coords{
 		X: obj.Coords().X + int32(dX),
 		Y: obj.Coords().Y + int32(dY),
 	})

@@ -2,43 +2,41 @@ package interfaces
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/src/constants"
-	"github.com/pseudoelement/ping-pong/src/loaders"
-	"github.com/pseudoelement/ping-pong/src/settings"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 )
 
 type IInjector interface {
 	SoundLoader() ISoundLoader
 	ImageLoader() IImageLoader
 	EventManager() IEventManager
-	GameSettings() *settings.GameSettings
+	GameSettings() IGameSettings
 	Renderer() IRenderer
 
 	SetSoundLoader(soundLoader ISoundLoader)
 	SetEventManager(eventManager IEventManager)
-	SetGameSettings(gameSettings *settings.GameSettings)
+	SetGameSettings(gameSettings IGameSettings)
 	SetRenderer(renderer IRenderer)
 }
 
 type ISoundLoader interface {
-	GetSound(soundName loaders.AppSoundName) rl.Sound
+	GetSound(soundName constants.AppSoundName) rl.Sound
 }
 
 type IImageLoader interface {
-	GetTexture(imgName loaders.AppImageName) rl.Texture2D
-	GetAppBackgrounds() []loaders.AppImage
-	GetAppBackground(bgName loaders.AppImageName) (loaders.AppImage, bool)
+	GetTexture(imgName constants.AppImageName) rl.Texture2D
+	GetAppBackgrounds() []constants.AppImage
+	GetAppBackground(bgName constants.AppImageName) (constants.AppImage, bool)
 }
 
 type IEventManager interface {
-	MouseClickEventEmitter() *models.EventEmitter[constants.MouseClickEvent]
-	MouseMoveEventEmitter() *models.EventEmitter[constants.MouseMoveEvent]
-	KeyboardEventEmitter() *models.EventEmitter[constants.KeyPressedEvent]
+	MouseClickEventEmitter() *common.EventEmitter[constants.MouseClickEvent]
+	MouseMoveEventEmitter() *common.EventEmitter[constants.MouseMoveEvent]
+	KeyboardEventEmitter() *common.EventEmitter[constants.KeyPressedEvent]
 
-	FpsToggleEventEmitter() *models.EventEmitter[constants.FpsToggleEvent]
-	BackgroundChangeEventEmitter() *models.EventEmitter[constants.BackgroundChangeEvent]
-	NextFrameEventEmitter() *models.EventEmitter[constants.NextFrameEvent]
+	FpsToggleEventEmitter() *common.EventEmitter[constants.FpsToggleEvent]
+	BackgroundChangeEventEmitter() *common.EventEmitter[constants.BackgroundChangeEvent]
+	NextFrameEventEmitter() *common.EventEmitter[constants.NextFrameEvent]
 
 	UseUserInputHandlers()
 }
@@ -47,4 +45,24 @@ type IRenderer interface {
 	Render()
 	CurrentScreen() IScreen
 	SetScreen(screen IScreen)
+}
+
+type IGameSettings interface {
+	FontSize() int32
+	SetFontSize(fontSize int32)
+
+	WindowWidth() int32
+	SetWindowWidth(windowWidth int32)
+
+	WindowHeight() int32
+	SetWindowHeight(windowHeight int32)
+
+	Fps() int32
+	SetFps(fps int32)
+
+	IsShownFps() bool
+	SetShowFps(showFps bool)
+
+	MainBackground() constants.AppImageName
+	SetMainBackground(bg constants.AppImageName)
 }

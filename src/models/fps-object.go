@@ -22,6 +22,6 @@ func NewFpsObject(p TextObjectStructParams, injector *injector.Injector) *FpsObj
 
 func (fo *FpsObject) Update() {
 	settings := fo.Injector().GameSettings()
-	value := fmt.Sprintf("%d FPS", settings.Fps)
+	value := fmt.Sprintf("%d FPS", settings.Fps())
 	fo.SetValue(value)
 }

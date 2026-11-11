@@ -2,15 +2,15 @@ package models
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 )
 
 type ImageObjectStructParams struct {
-	Styles        *models.ObjectStyles
-	InitialCoords models.Coords
+	Styles        *common.ObjectStyles
+	InitialCoords common.Coords
 	Id            string
 	Texture       rl.Texture2D
 }

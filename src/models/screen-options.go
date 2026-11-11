@@ -4,20 +4,19 @@ import (
 	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/sdk/models"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
-	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/loaders"
 )
 
 type ScreenOptions struct {
 	injector        *injector.Injector
 	textObjectsPool []interfaces.ITextObject
 	rectObjectsPool []interfaces.IRectangleObject
-	unsubs          []models.UnsubscribeFn
+	unsubs          []common.UnsubscribeFn
 }
 
 var _ interfaces.IScreen = (*ScreenOptions)(nil)
@@ -40,6 +39,10 @@ func (so *ScreenOptions) RectObjects() []interfaces.IRectangleObject {
 	return so.rectObjectsPool
 }
 
+func (sm *ScreenOptions) ImageObjects() []interfaces.IImageObject {
+	return []interfaces.IImageObject{}
+}
+
 func (so *ScreenOptions) OnDestroy() {
 	for _, unsubFn := range so.unsubs {
 		unsubFn()
@@ -47,17 +50,17 @@ func (so *ScreenOptions) OnDestroy() {
 }
 
 func (so *ScreenOptions) _init() {
-	windowWidth := so.injector.GameSettings().WindowWidth
-	windowHeight := so.injector.GameSettings().WindowHeight
-	mainBgCode := so.injector.GameSettings().MainBackground
+	windowWidth := so.injector.GameSettings().WindowWidth()
+	windowHeight := so.injector.GameSettings().WindowHeight()
+	mainBgCode := so.injector.GameSettings().MainBackground()
 	bgImg, _ := so.injector.ImageLoader().GetAppBackground(mainBgCode)
 
 	wrapper := NewRectangleObject(
 		RectangleObjectStructParams{
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight / 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 			Width:         400,
 			Height:        400,
-			Styles: &models.ObjectStyles{
+			Styles: &common.ObjectStyles{
 				Color:        constants.ColorTransparentBlue,
 				ZIndex:       1,
 				BorderRadius: 0.3,
@@ -69,8 +72,8 @@ func (so *ScreenOptions) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Toggle FPS counter",
 			FontSize:      24,
-			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight / 2},
+			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 		},
 		so.injector,
 	)
@@ -78,8 +81,8 @@ func (so *ScreenOptions) _init() {
 		TextObjectStructParams{
 			InitialValue:  fmt.Sprintf("Change theme: <%s>\n", bgImg.Name),
 			FontSize:      24,
-			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
+			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
 			Id:            "change-bg-btn-id",
 		},
 		so.injector,
@@ -88,8 +91,8 @@ func (so *ScreenOptions) _init() {
 		TextObjectStructParams{
 			InitialValue:  "Back",
 			FontSize:      24,
-			Styles:        &models.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: models.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
+			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
 		},
 		so.injector,
 	)
@@ -122,12 +125,12 @@ func _toggleFpsBtnEventHandler(
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
-	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
-			injector.GameSettings().SetShowFps(!injector.GameSettings().ShowFps)
+			injector.GameSettings().SetShowFps(!injector.GameSettings().IsShownFps())
 			injector.EventManager().FpsToggleEventEmitter().Emit(constants.FpsToggleEvent{
-				ShowFps: injector.GameSettings().ShowFps,
+				ShowFps: injector.GameSettings().IsShownFps(),
 			})
 		}
 	}
@@ -139,13 +142,13 @@ func _changeBackgroundBtnEventHandler(
 	injector *injector.Injector,
 	screen *ScreenOptions,
 ) {
-	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
-			currentBgName := injector.GameSettings().MainBackground
+			currentBgName := injector.GameSettings().MainBackground()
 			appBackgrounds := injector.ImageLoader().GetAppBackgrounds()
 
-			var nextBg loaders.AppImage
+			var nextBg constants.AppImage
 			for idx, bgImg := range appBackgrounds {
 				if currentBgName == bgImg.Name {
 					if idx == len(appBackgrounds)-1 {
@@ -179,7 +182,7 @@ func _backBtnEventHandler(
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
-	mouseCoords := models.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			injector.Renderer().CurrentScreen().OnDestroy()

@@ -6,11 +6,10 @@ import (
 	"slices"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	sdkmodels "github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/loaders"
 	"github.com/pseudoelement/ping-pong/src/models"
 )
 
@@ -34,14 +33,11 @@ func (r *Renderer) Render() {
 	rl.ClearBackground(rl.White)
 	rl.BeginDrawing()
 
-	capacity :=
-		len(r.openedScreen.TextObjects()) +
-			len(r.openedScreen.RectObjects()) +
-			len(r.staticObjects)
-	allObjects := make([]interfaces.IBaseObject, 0, capacity)
+	allObjects := make([]interfaces.IBaseObject, 0)
 
 	for _, textObject := range r.openedScreen.TextObjects() {
 		allObjects = append(allObjects, textObject)
+		// for
 	}
 	for _, rectObject := range r.openedScreen.RectObjects() {
 		allObjects = append(allObjects, rectObject)
@@ -127,17 +123,17 @@ func (r *Renderer) _setStaticObjects() {
 		models.TextObjectStructParams{
 			InitialValue:  "0 FPS",
 			FontSize:      32,
-			Styles:        &sdkmodels.ObjectStyles{Color: rl.Red, ZIndex: math.MaxInt16},
-			InitialCoords: sdkmodels.Coords{X: 10, Y: 5},
+			Styles:        &common.ObjectStyles{Color: rl.Red, ZIndex: math.MaxInt16},
+			InitialCoords: common.Coords{X: 10, Y: 5},
 			Id:            FpsObjectId,
 		},
 		r.injector,
 	)
 	appBackgroundObject := models.NewImageObject(
 		models.ImageObjectStructParams{
-			Styles:        &sdkmodels.ObjectStyles{ZIndex: 0},
-			InitialCoords: sdkmodels.Coords{X: 0, Y: 0},
-			Texture:       imgLoader.GetTexture(settings.MainBackground),
+			Styles:        &common.ObjectStyles{ZIndex: 0},
+			InitialCoords: common.Coords{X: 0, Y: 0},
+			Texture:       imgLoader.GetTexture(settings.MainBackground()),
 			Id:            MainBgObjectId,
 		},
 		r.injector,
@@ -155,8 +151,8 @@ func _fpsToggleEventHandler(
 			models.TextObjectStructParams{
 				InitialValue:  "0 FPS",
 				FontSize:      32,
-				Styles:        &sdkmodels.ObjectStyles{Color: rl.Red, ZIndex: math.MaxInt16},
-				InitialCoords: sdkmodels.Coords{X: 10, Y: 5},
+				Styles:        &common.ObjectStyles{Color: rl.Red, ZIndex: math.MaxInt16},
+				InitialCoords: common.Coords{X: 10, Y: 5},
 				Id:            FpsObjectId,
 			},
 			renderer.injector,
@@ -185,9 +181,9 @@ func _backgroundChangeEventHandler(
 		if obj.Id() == MainBgObjectId {
 			obj = models.NewImageObject(
 				models.ImageObjectStructParams{
-					Styles:        &sdkmodels.ObjectStyles{ZIndex: 0},
-					InitialCoords: sdkmodels.Coords{X: 0, Y: 0},
-					Texture:       imgLoader.GetTexture(loaders.AppImageName(event.Name)),
+					Styles:        &common.ObjectStyles{ZIndex: 0},
+					InitialCoords: common.Coords{X: 0, Y: 0},
+					Texture:       imgLoader.GetTexture(constants.AppImageName(event.Name)),
 					Id:            MainBgObjectId,
 				},
 				renderer.injector,

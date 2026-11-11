@@ -2,18 +2,18 @@ package events
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/pseudoelement/ping-pong/sdk/common"
+	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/sdk/models"
-	"github.com/pseudoelement/ping-pong/src/constants"
 )
 
 type EventManager struct {
-	mouseClickEventEmitter *models.EventEmitter[constants.MouseClickEvent]
-	mouseMoveEventEmitter  *models.EventEmitter[constants.MouseMoveEvent]
-	keyboardEventEmitter   *models.EventEmitter[constants.KeyPressedEvent]
-	fpsToggleEventEmitter  *models.EventEmitter[constants.FpsToggleEvent]
-	bgChangedEventEmitter  *models.EventEmitter[constants.BackgroundChangeEvent]
-	nextFrameEventEmitter  *models.EventEmitter[constants.NextFrameEvent]
+	mouseClickEventEmitter *common.EventEmitter[constants.MouseClickEvent]
+	mouseMoveEventEmitter  *common.EventEmitter[constants.MouseMoveEvent]
+	keyboardEventEmitter   *common.EventEmitter[constants.KeyPressedEvent]
+	fpsToggleEventEmitter  *common.EventEmitter[constants.FpsToggleEvent]
+	bgChangedEventEmitter  *common.EventEmitter[constants.BackgroundChangeEvent]
+	nextFrameEventEmitter  *common.EventEmitter[constants.NextFrameEvent]
 }
 
 var _ interfaces.IEventManager = (*EventManager)(nil)
@@ -21,36 +21,36 @@ var _ interfaces.IEventManager = (*EventManager)(nil)
 func NewEventManager() *EventManager {
 	rl.GetMouseX()
 	return &EventManager{
-		mouseClickEventEmitter: models.NewEventEmitter(constants.MouseClickEvent{}),
-		mouseMoveEventEmitter:  models.NewEventEmitter(constants.MouseMoveEvent{}),
-		keyboardEventEmitter:   models.NewEventEmitter(constants.KeyPressedEvent{}),
-		fpsToggleEventEmitter:  models.NewEventEmitter(constants.FpsToggleEvent{}),
-		bgChangedEventEmitter:  models.NewEventEmitter(constants.BackgroundChangeEvent{}),
-		nextFrameEventEmitter:  models.NewEventEmitter(constants.NextFrameEvent{}),
+		mouseClickEventEmitter: common.NewEventEmitter(constants.MouseClickEvent{}),
+		mouseMoveEventEmitter:  common.NewEventEmitter(constants.MouseMoveEvent{}),
+		keyboardEventEmitter:   common.NewEventEmitter(constants.KeyPressedEvent{}),
+		fpsToggleEventEmitter:  common.NewEventEmitter(constants.FpsToggleEvent{}),
+		bgChangedEventEmitter:  common.NewEventEmitter(constants.BackgroundChangeEvent{}),
+		nextFrameEventEmitter:  common.NewEventEmitter(constants.NextFrameEvent{}),
 	}
 }
 
-func (em *EventManager) MouseClickEventEmitter() *models.EventEmitter[constants.MouseClickEvent] {
+func (em *EventManager) MouseClickEventEmitter() *common.EventEmitter[constants.MouseClickEvent] {
 	return em.mouseClickEventEmitter
 }
 
-func (em *EventManager) MouseMoveEventEmitter() *models.EventEmitter[constants.MouseMoveEvent] {
+func (em *EventManager) MouseMoveEventEmitter() *common.EventEmitter[constants.MouseMoveEvent] {
 	return em.mouseMoveEventEmitter
 }
 
-func (em *EventManager) KeyboardEventEmitter() *models.EventEmitter[constants.KeyPressedEvent] {
+func (em *EventManager) KeyboardEventEmitter() *common.EventEmitter[constants.KeyPressedEvent] {
 	return em.keyboardEventEmitter
 }
 
-func (em *EventManager) FpsToggleEventEmitter() *models.EventEmitter[constants.FpsToggleEvent] {
+func (em *EventManager) FpsToggleEventEmitter() *common.EventEmitter[constants.FpsToggleEvent] {
 	return em.fpsToggleEventEmitter
 }
 
-func (em *EventManager) BackgroundChangeEventEmitter() *models.EventEmitter[constants.BackgroundChangeEvent] {
+func (em *EventManager) BackgroundChangeEventEmitter() *common.EventEmitter[constants.BackgroundChangeEvent] {
 	return em.bgChangedEventEmitter
 }
 
-func (em *EventManager) NextFrameEventEmitter() *models.EventEmitter[constants.NextFrameEvent] {
+func (em *EventManager) NextFrameEventEmitter() *common.EventEmitter[constants.NextFrameEvent] {
 	return em.nextFrameEventEmitter
 }
 
