@@ -32,7 +32,7 @@ type IImageLoader interface {
 type IEventManager interface {
 	MouseClickEventEmitter() *common.EventEmitter[constants.MouseClickEvent]
 	MouseMoveEventEmitter() *common.EventEmitter[constants.MouseMoveEvent]
-	KeyboardEventEmitter() *common.EventEmitter[constants.KeyPressedEvent]
+	KeyDownEventEmitter() *common.EventEmitter[constants.KeyDownEvent]
 
 	FpsToggleEventEmitter() *common.EventEmitter[constants.FpsToggleEvent]
 	BackgroundChangeEventEmitter() *common.EventEmitter[constants.BackgroundChangeEvent]

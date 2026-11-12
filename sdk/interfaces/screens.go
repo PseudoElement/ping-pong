@@ -1,9 +1,12 @@
 package interfaces
 
-type IScreen interface {
-	IDestroyable
-
+type IScreenBase interface {
 	TextObjects() []ITextObject
 	RectObjects() []IRectangleObject
 	ImageObjects() []IImageObject
+}
+
+type IScreen interface {
+	IScreenBase
+	IDestroyable
 }

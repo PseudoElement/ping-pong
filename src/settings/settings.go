@@ -1,8 +1,10 @@
 package settings
 
 import (
-	"github.com/pseudoelement/ping-pong/sdk/constants"
+	sdkconstants "github.com/pseudoelement/ping-pong/sdk/constants"
+
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+	"github.com/pseudoelement/ping-pong/src/constants"
 )
 
 type GameSettings struct {
@@ -11,7 +13,7 @@ type GameSettings struct {
 	windowHeight   int32
 	fps            int32
 	showFps        bool
-	mainBackground constants.AppImageName
+	mainBackground sdkconstants.AppImageName
 }
 
 var _ interfaces.IGameSettings = (*GameSettings)(nil)
@@ -67,10 +69,10 @@ func (gs *GameSettings) SetShowFps(showFps bool) {
 	gs.showFps = showFps
 }
 
-func (gs *GameSettings) MainBackground() constants.AppImageName {
+func (gs *GameSettings) MainBackground() sdkconstants.AppImageName {
 	return gs.mainBackground
 }
 
-func (gs *GameSettings) SetMainBackground(bg constants.AppImageName) {
+func (gs *GameSettings) SetMainBackground(bg sdkconstants.AppImageName) {
 	gs.mainBackground = bg
 }

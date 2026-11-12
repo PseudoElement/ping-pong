@@ -7,6 +7,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/injector"
 )
 
@@ -68,9 +69,11 @@ func (bo *BaseObject) SetCoords(newCoords common.Coords) {
 	bo.coords = newCoords
 
 	dX, dY := newCoords.X-prevCoords.X, newCoords.Y-prevCoords.Y
-	bo._forEach(func(child *BaseObject) {
-		child.coords.X += dX
-		child.coords.Y += dY
+	utils.ForEachInObject(bo, func(child interfaces.IBaseObject) {
+		child.SetCoords(common.Coords{
+			X: child.Coords().X + dX,
+			Y: child.Coords().Y + dY,
+		})
 	})
 }
 
@@ -124,19 +127,10 @@ func (bo *BaseObject) Move(dX, dY int32) {
 	bo.coords.X += dX
 	bo.coords.Y += dY
 
-	bo._forEach(func(child *BaseObject) {
-		child.coords.X += dX
-		child.coords.Y += dY
+	utils.ForEachInObject(bo, func(child interfaces.IBaseObject) {
+		child.SetCoords(common.Coords{
+			X: child.Coords().X + dX,
+			Y: child.Coords().Y + dY,
+		})
 	})
-}
-
-func (bo *BaseObject) _forEach(callback func(child *BaseObject)) {
-	childrenQueue := append([]interfaces.IBaseObject{}, bo.children...)
-	for len(childrenQueue) > 0 {
-		firstChild := childrenQueue[0].(*BaseObject)
-		childrenQueue = childrenQueue[1:]
-
-		callback(firstChild)
-		childrenQueue = append(childrenQueue, firstChild.children...)
-	}
 }

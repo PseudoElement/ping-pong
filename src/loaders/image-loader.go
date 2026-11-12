@@ -2,19 +2,20 @@ package loaders
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/pseudoelement/ping-pong/sdk/constants"
+	sdkconstants "github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
+	"github.com/pseudoelement/ping-pong/src/constants"
 )
 
 type ImageLoader struct {
 	windowWidth  int32
 	windowHeight int32
-	textures     map[constants.AppImageName]rl.Texture2D
+	textures     map[sdkconstants.AppImageName]rl.Texture2D
 }
 
 func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 	loader := &ImageLoader{
-		textures:     make(map[constants.AppImageName]rl.Texture2D),
+		textures:     make(map[sdkconstants.AppImageName]rl.Texture2D),
 		windowHeight: windowHeight,
 		windowWidth:  windowWidth,
 	}
@@ -22,35 +23,37 @@ func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 	return loader
 }
 
-func (il *ImageLoader) GetTexture(imgName constants.AppImageName) rl.Texture2D {
+func (il *ImageLoader) GetTexture(imgName sdkconstants.AppImageName) rl.Texture2D {
 	return il.textures[imgName]
 }
 
-func (il *ImageLoader) GetAppBackgrounds() []constants.AppImage {
-	bgs := make([]constants.AppImage, len(app_background_factories))
-	for idx, bgFactory := range app_background_factories {
+func (il *ImageLoader) GetAppBackgrounds() []sdkconstants.AppImage {
+	bgs := make([]sdkconstants.AppImage, len(constants.APP_BACKGROUND_FACTORIES))
+	for idx, bgFactory := range constants.APP_BACKGROUND_FACTORIES {
 		bgs[idx] = bgFactory(il.windowWidth, il.windowHeight)
 	}
 	return bgs
 }
 
-func (il *ImageLoader) GetAppBackground(bgName constants.AppImageName) (constants.AppImage, bool) {
-	for _, bgFactory := range app_background_factories {
+func (il *ImageLoader) GetAppBackground(bgName sdkconstants.AppImageName) (sdkconstants.AppImage, bool) {
+	for _, bgFactory := range constants.APP_BACKGROUND_FACTORIES {
 		bg := bgFactory(il.windowWidth, il.windowHeight)
 		if bg.Name == bgName {
 			return bg, true
 		}
 	}
-	return constants.AppImage{}, false
+	return sdkconstants.AppImage{}, false
 }
 
 func (il *ImageLoader) _load() {
-	for _, imgFactory := range app_image_factories {
+	for _, imgFactory := range constants.APP_IMAGE_FACTORIES {
 		img := imgFactory(il.windowWidth, il.windowHeight)
 		imgPath := utils.AppPath(img.Href)
 
 		rlImg := rl.LoadImage(imgPath.Normalize())
 		rl.ImageResize(rlImg, img.Width, img.Height)
+		rl.ImageRotate(rlImg, img.RotationDeg)
+
 		texture := rl.LoadTextureFromImage(rlImg)
 		rl.UnloadImage(rlImg)
 

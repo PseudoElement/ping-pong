@@ -10,7 +10,7 @@ import (
 type EventManager struct {
 	mouseClickEventEmitter *common.EventEmitter[constants.MouseClickEvent]
 	mouseMoveEventEmitter  *common.EventEmitter[constants.MouseMoveEvent]
-	keyboardEventEmitter   *common.EventEmitter[constants.KeyPressedEvent]
+	keyDownEventEmitter    *common.EventEmitter[constants.KeyDownEvent]
 	fpsToggleEventEmitter  *common.EventEmitter[constants.FpsToggleEvent]
 	bgChangedEventEmitter  *common.EventEmitter[constants.BackgroundChangeEvent]
 	nextFrameEventEmitter  *common.EventEmitter[constants.NextFrameEvent]
@@ -23,7 +23,7 @@ func NewEventManager() *EventManager {
 	return &EventManager{
 		mouseClickEventEmitter: common.NewEventEmitter(constants.MouseClickEvent{}),
 		mouseMoveEventEmitter:  common.NewEventEmitter(constants.MouseMoveEvent{}),
-		keyboardEventEmitter:   common.NewEventEmitter(constants.KeyPressedEvent{}),
+		keyDownEventEmitter:    common.NewEventEmitter(constants.KeyDownEvent{}),
 		fpsToggleEventEmitter:  common.NewEventEmitter(constants.FpsToggleEvent{}),
 		bgChangedEventEmitter:  common.NewEventEmitter(constants.BackgroundChangeEvent{}),
 		nextFrameEventEmitter:  common.NewEventEmitter(constants.NextFrameEvent{}),
@@ -38,8 +38,8 @@ func (em *EventManager) MouseMoveEventEmitter() *common.EventEmitter[constants.M
 	return em.mouseMoveEventEmitter
 }
 
-func (em *EventManager) KeyboardEventEmitter() *common.EventEmitter[constants.KeyPressedEvent] {
-	return em.keyboardEventEmitter
+func (em *EventManager) KeyDownEventEmitter() *common.EventEmitter[constants.KeyDownEvent] {
+	return em.keyDownEventEmitter
 }
 
 func (em *EventManager) FpsToggleEventEmitter() *common.EventEmitter[constants.FpsToggleEvent] {
@@ -76,9 +76,9 @@ func (em *EventManager) UseUserInputHandlers() {
 	})
 
 	/* KEYBOARD EVENTS */
-	for _, keyCode := range []int32{rl.KeyW, rl.KeyS, rl.KeyA, rl.KeyD} {
-		if rl.IsKeyPressed((keyCode)) {
-			em.keyboardEventEmitter.Emit(constants.KeyPressedEvent{
+	for _, keyCode := range KEY_CODES {
+		if rl.IsKeyDown((keyCode)) {
+			em.keyDownEventEmitter.Emit(constants.KeyDownEvent{
 				KeyCode: keyCode,
 			})
 		}

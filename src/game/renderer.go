@@ -9,6 +9,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/models"
 )
@@ -37,13 +38,27 @@ func (r *Renderer) Render() {
 
 	for _, textObject := range r.openedScreen.TextObjects() {
 		allObjects = append(allObjects, textObject)
-		// for
+		utils.ForEachInObject(textObject, func(child interfaces.IBaseObject) {
+			allObjects = append(allObjects, child)
+		})
 	}
 	for _, rectObject := range r.openedScreen.RectObjects() {
 		allObjects = append(allObjects, rectObject)
+		utils.ForEachInObject(rectObject, func(child interfaces.IBaseObject) {
+			allObjects = append(allObjects, child)
+		})
+	}
+	for _, imgObject := range r.openedScreen.ImageObjects() {
+		allObjects = append(allObjects, imgObject)
+		utils.ForEachInObject(imgObject, func(child interfaces.IBaseObject) {
+			allObjects = append(allObjects, child)
+		})
 	}
 	for _, textObject := range r.staticObjects {
 		allObjects = append(allObjects, textObject)
+		utils.ForEachInObject(textObject, func(child interfaces.IBaseObject) {
+			allObjects = append(allObjects, child)
+		})
 	}
 
 	slices.SortFunc(allObjects, func(prev, next interfaces.IBaseObject) int {
@@ -72,6 +87,16 @@ func (r *Renderer) Render() {
 				typedObj.Coords().Y,
 				rl.White,
 			)
+			rl.DrawRectangleLinesEx(
+				rl.Rectangle{
+					X:      float32(typedObj.Coords().X),
+					Y:      float32(typedObj.Coords().Y),
+					Width:  float32(typedObj.Width()),
+					Height: float32(typedObj.Height()),
+				},
+				3,
+				rl.Purple,
+			)
 		case interfaces.IRectangleObject:
 			rectangle := rl.Rectangle{
 				X:      float32(typedObj.Coords().X),
@@ -97,6 +122,9 @@ func (r *Renderer) CurrentScreen() interfaces.IScreen {
 }
 
 func (r *Renderer) SetScreen(screen interfaces.IScreen) {
+	if r.openedScreen != nil {
+		r.openedScreen.OnDestroy()
+	}
 	r.openedScreen = screen
 }
 
@@ -112,6 +140,11 @@ func (r *Renderer) init() {
 		BackgroundChangeEventEmitter().
 		Subscribe(func(event constants.BackgroundChangeEvent) {
 			_backgroundChangeEventHandler(event, r)
+		})
+	r.injector.EventManager().
+		KeyDownEventEmitter().
+		Subscribe(func(event constants.KeyDownEvent) {
+			_keyDownEventHandler(event, r)
 		})
 }
 
@@ -193,4 +226,14 @@ func _backgroundChangeEventHandler(
 	}
 
 	renderer.staticObjects = newStaticObjects
+}
+
+func _keyDownEventHandler(
+	event constants.KeyDownEvent,
+	renderer *Renderer,
+) {
+	if event.KeyCode == rl.KeyEscape {
+		renderer.openedScreen.OnDestroy()
+		renderer.SetScreen(models.NewScreenMenu(renderer.injector))
+	}
 }

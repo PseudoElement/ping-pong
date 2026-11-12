@@ -5,48 +5,30 @@ import (
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/common"
-	"github.com/pseudoelement/ping-pong/sdk/constants"
+	sdkconstants "github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
+	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 )
 
 type ScreenOptions struct {
-	injector        *injector.Injector
-	textObjectsPool []interfaces.ITextObject
-	rectObjectsPool []interfaces.IRectangleObject
-	unsubs          []common.UnsubscribeFn
+	*ScreenBase
 }
 
 var _ interfaces.IScreen = (*ScreenOptions)(nil)
 
 func NewScreenOptions(injector *injector.Injector) *ScreenOptions {
 	screen := &ScreenOptions{
-		injector:        injector,
-		textObjectsPool: make([]interfaces.ITextObject, 0),
-		rectObjectsPool: make([]interfaces.IRectangleObject, 0),
+		ScreenBase: NewScreenBase(injector),
 	}
 	screen._init()
 	return screen
 }
 
-func (so *ScreenOptions) TextObjects() []interfaces.ITextObject {
-	return so.textObjectsPool
-}
-
-func (so *ScreenOptions) RectObjects() []interfaces.IRectangleObject {
-	return so.rectObjectsPool
-}
-
-func (sm *ScreenOptions) ImageObjects() []interfaces.IImageObject {
-	return []interfaces.IImageObject{}
-}
-
 func (so *ScreenOptions) OnDestroy() {
-	for _, unsubFn := range so.unsubs {
-		unsubFn()
-	}
+	so.onDestroyBase()
 }
 
 func (so *ScreenOptions) _init() {
@@ -104,24 +86,25 @@ func (so *ScreenOptions) _init() {
 
 	mouseClickEventUnsubFn := so.injector.EventManager().
 		MouseClickEventEmitter().
-		Subscribe(func(event constants.MouseClickEvent) {
+		Subscribe(func(event sdkconstants.MouseClickEvent) {
 			_toggleFpsBtnEventHandler(event, toggleFpsBtn, so.injector)
 			_changeBackgroundBtnEventHandler(event, changeBackgroundBtn, so.injector, so)
 			_backBtnEventHandler(event, backBtn, so.injector)
 		})
 	mouseMoveEventUnsubFn := so.injector.EventManager().
 		MouseMoveEventEmitter().
-		Subscribe(func(event constants.MouseMoveEvent) {
+		Subscribe(func(event sdkconstants.MouseMoveEvent) {
 			_mouseMoveEventHandler(event, so.textObjectsPool, so.injector)
 		})
 
-	so.unsubs = append(so.unsubs, mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
-	so.textObjectsPool = append(so.textObjectsPool, toggleFpsBtn, changeBackgroundBtn, backBtn)
-	so.rectObjectsPool = append(so.rectObjectsPool, wrapper)
+	so.appendUnsubs(mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
+
+	so.appendTextObjects(toggleFpsBtn, changeBackgroundBtn, backBtn)
+	so.appendRectObjects(wrapper)
 }
 
 func _toggleFpsBtnEventHandler(
-	mouseEvent constants.MouseClickEvent,
+	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
@@ -129,7 +112,7 @@ func _toggleFpsBtnEventHandler(
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			injector.GameSettings().SetShowFps(!injector.GameSettings().IsShownFps())
-			injector.EventManager().FpsToggleEventEmitter().Emit(constants.FpsToggleEvent{
+			injector.EventManager().FpsToggleEventEmitter().Emit(sdkconstants.FpsToggleEvent{
 				ShowFps: injector.GameSettings().IsShownFps(),
 			})
 		}
@@ -137,7 +120,7 @@ func _toggleFpsBtnEventHandler(
 }
 
 func _changeBackgroundBtnEventHandler(
-	mouseEvent constants.MouseClickEvent,
+	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 	screen *ScreenOptions,
@@ -148,7 +131,7 @@ func _changeBackgroundBtnEventHandler(
 			currentBgName := injector.GameSettings().MainBackground()
 			appBackgrounds := injector.ImageLoader().GetAppBackgrounds()
 
-			var nextBg constants.AppImage
+			var nextBg sdkconstants.AppImage
 			for idx, bgImg := range appBackgrounds {
 				if currentBgName == bgImg.Name {
 					if idx == len(appBackgrounds)-1 {
@@ -163,7 +146,7 @@ func _changeBackgroundBtnEventHandler(
 			injector.GameSettings().SetMainBackground(nextBg.Name)
 			injector.EventManager().
 				BackgroundChangeEventEmitter().
-				Emit(constants.BackgroundChangeEvent{
+				Emit(sdkconstants.BackgroundChangeEvent{
 					Name: string(nextBg.Name),
 					Href: nextBg.Href,
 				})
@@ -178,14 +161,13 @@ func _changeBackgroundBtnEventHandler(
 }
 
 func _backBtnEventHandler(
-	mouseEvent constants.MouseClickEvent,
+	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
-			injector.Renderer().CurrentScreen().OnDestroy()
 			injector.Renderer().SetScreen(NewScreenMenu(injector))
 		}
 	}

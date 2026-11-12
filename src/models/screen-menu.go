@@ -5,48 +5,31 @@ import (
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/common"
-	"github.com/pseudoelement/ping-pong/sdk/constants"
+	sdkconstants "github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
+	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
+	"github.com/pseudoelement/ping-pong/src/models/movement"
 )
 
 type ScreenMenu struct {
-	injector        *injector.Injector
-	textObjectsPool []interfaces.ITextObject
-	rectObjectsPool []interfaces.IRectangleObject
-	unsubs          []common.UnsubscribeFn
+	*ScreenBase
 }
 
 var _ interfaces.IScreen = (*ScreenMenu)(nil)
 
 func NewScreenMenu(injector *injector.Injector) *ScreenMenu {
 	screen := &ScreenMenu{
-		injector:        injector,
-		textObjectsPool: make([]interfaces.ITextObject, 0),
-		rectObjectsPool: make([]interfaces.IRectangleObject, 0),
+		ScreenBase: NewScreenBase(injector),
 	}
 	screen._init()
 	return screen
 }
 
-func (sm *ScreenMenu) TextObjects() []interfaces.ITextObject {
-	return sm.textObjectsPool
-}
-
-func (sm *ScreenMenu) RectObjects() []interfaces.IRectangleObject {
-	return sm.rectObjectsPool
-}
-
-func (sm *ScreenMenu) ImageObjects() []interfaces.IImageObject {
-	return []interfaces.IImageObject{}
-}
-
-func (sm *ScreenMenu) OnDestroy() {
-	for _, unsubFn := range sm.unsubs {
-		unsubFn()
-	}
+func (sg *ScreenMenu) OnDestroy() {
+	sg.onDestroyBase()
 }
 
 func (sm *ScreenMenu) _init() {
@@ -111,7 +94,7 @@ func (sm *ScreenMenu) _init() {
 
 	mouseClickEventUnsubFn := sm.injector.EventManager().
 		MouseClickEventEmitter().
-		Subscribe(func(event constants.MouseClickEvent) {
+		Subscribe(func(event sdkconstants.MouseClickEvent) {
 			_playWithBotBtnEventHandler(event, playWithBotBtn, sm.injector)
 			_playWithPlayerBtnEventHandler(event, playWithPlayerBtn, sm.injector)
 			_optionsBtnEventHandler(event, optionsBtn, sm.injector)
@@ -119,58 +102,98 @@ func (sm *ScreenMenu) _init() {
 		})
 	mouseMoveEventUnsubFn := sm.injector.EventManager().
 		MouseMoveEventEmitter().
-		Subscribe(func(event constants.MouseMoveEvent) {
+		Subscribe(func(event sdkconstants.MouseMoveEvent) {
 			_mouseMoveEventHandler(event, sm.textObjectsPool, sm.injector)
 		})
 
-	sm.unsubs = append(sm.unsubs, mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
-	sm.textObjectsPool = append(sm.textObjectsPool, playWithBotBtn, playWithPlayerBtn, optionsBtn, exitBtn)
-	sm.rectObjectsPool = append(sm.rectObjectsPool, wrapper)
+	sm.appendUnsubs(mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
+
+	sm.appendTextObjects(playWithBotBtn, playWithPlayerBtn, optionsBtn, exitBtn)
+	sm.appendRectObjects(wrapper)
 }
 
 func _playWithBotBtnEventHandler(
-	mouseEvent constants.MouseClickEvent,
+	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
-			injector.Renderer().CurrentScreen().OnDestroy()
-			injector.Renderer().SetScreen(NewScreenGame(injector))
+			screenGame := NewScreenGame(injector)
+
+			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdLeftPlayer)
+			if !ok {
+				panic("[_playWithBotBtnEventHandler] leftPlayerObj not found")
+			}
+			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdRightPlayer)
+			if !ok {
+				panic("[_playWithBotBtnEventHandler] rightPlayerObj not found")
+			}
+
+			leftPlayerMovementStrategy := movement.NewWasdKeysMovementStrategy(
+				leftPlayerObj.(interfaces.IObjectWithWidthAndHeight),
+				injector,
+			)
+			rightPlayerMovementStrategy := movement.NewTopBottomMovementStrategy(
+				rightPlayerObj.(interfaces.IObjectWithWidthAndHeight),
+				injector,
+			)
+
+			screenGame.SetMovementStrategies(leftPlayerMovementStrategy, rightPlayerMovementStrategy)
+			injector.Renderer().SetScreen(screenGame)
 		}
 	}
 }
 
 func _playWithPlayerBtnEventHandler(
-	mouseEvent constants.MouseClickEvent,
+	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
-			injector.Renderer().CurrentScreen().OnDestroy()
-			injector.Renderer().SetScreen(NewScreenGame(injector))
+			screenGame := NewScreenGame(injector)
+
+			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdLeftPlayer)
+			if !ok {
+				panic("[_playWithPlayerBtnEventHandler] leftPlayerObj not found")
+			}
+			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdRightPlayer)
+			if !ok {
+				panic("[_playWithPlayerBtnEventHandler] rightPlayerObj not found")
+			}
+
+			leftPlayerMovementStrategy := movement.NewWasdKeysMovementStrategy(
+				leftPlayerObj.(interfaces.IObjectWithWidthAndHeight),
+				injector,
+			)
+			rightPlayerMovementStrategy := movement.NewArrowsKeysMovementStrategy(
+				rightPlayerObj.(interfaces.IObjectWithWidthAndHeight),
+				injector,
+			)
+
+			screenGame.SetMovementStrategies(leftPlayerMovementStrategy, rightPlayerMovementStrategy)
+			injector.Renderer().SetScreen(screenGame)
 		}
 	}
 }
 
 func _optionsBtnEventHandler(
-	mouseEvent constants.MouseClickEvent,
+	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
 	injector *injector.Injector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
-			injector.Renderer().CurrentScreen().OnDestroy()
 			injector.Renderer().SetScreen(NewScreenOptions(injector))
 		}
 	}
 }
 
-func _exitBtnEventHandler(mouseEvent constants.MouseClickEvent, textObj interfaces.ITextObject) {
+func _exitBtnEventHandler(mouseEvent sdkconstants.MouseClickEvent, textObj interfaces.ITextObject) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
@@ -181,7 +204,7 @@ func _exitBtnEventHandler(mouseEvent constants.MouseClickEvent, textObj interfac
 }
 
 func _mouseMoveEventHandler(
-	mouseEvent constants.MouseMoveEvent,
+	mouseEvent sdkconstants.MouseMoveEvent,
 	textObjects []interfaces.ITextObject,
 	injector *injector.Injector,
 ) {

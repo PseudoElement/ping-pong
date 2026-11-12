@@ -1,4 +1,4 @@
-package utils
+package common
 
 func MergeSlices[T any](arrays [][]T) []T {
 	var totalLen int

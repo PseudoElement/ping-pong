@@ -3,6 +3,7 @@ package game
 import (
 	"context"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/fstanis/screenresolution"
@@ -40,6 +41,7 @@ func (g *Game) Start() {
 	rl.InitAudioDevice()
 	rl.InitWindow(windowWidth, windowHeight, "PingPong(raylib)")
 	rl.SetTargetFPS(120)
+	rl.SetExitKey(math.MinInt32)
 
 	eventManager := events.NewEventManager()
 	soundLoader := loaders.NewSoundLoader()

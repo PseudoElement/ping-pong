@@ -13,7 +13,7 @@ type MouseMoveEvent struct {
 	PosY int32
 }
 
-type KeyPressedEvent struct {
+type KeyDownEvent struct {
 	/* int value from raylib-go lib */
 	KeyCode int32
 }

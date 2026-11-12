@@ -8,4 +8,6 @@ const (
 	KindRectangle
 	KindImage
 	KindTriangle
+
+	KindScreen
 )
