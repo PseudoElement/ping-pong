@@ -15,3 +15,10 @@ type AppImage struct {
 	Name          AppImageName
 	RotationDeg   int32
 }
+
+type AppThemeName string
+
+type AppTheme struct {
+	ImgMainBackground AppImageName
+	ImgBall           AppImageName
+}

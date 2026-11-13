@@ -8,24 +8,24 @@ import (
 )
 
 type GameSettings struct {
-	fontSize       int32
-	windowWidth    int32
-	windowHeight   int32
-	fps            int32
-	showFps        bool
-	mainBackground sdkconstants.AppImageName
+	fontSize     int32
+	windowWidth  int32
+	windowHeight int32
+	fps          int32
+	showFps      bool
+	theme        sdkconstants.AppThemeName
 }
 
 var _ interfaces.IGameSettings = (*GameSettings)(nil)
 
 func NewGameSettings() *GameSettings {
 	return &GameSettings{
-		fontSize:       0,
-		windowWidth:    0,
-		windowHeight:   0,
-		fps:            0,
-		showFps:        true,
-		mainBackground: constants.ImgTenisBackground,
+		fontSize:     0,
+		windowWidth:  0,
+		windowHeight: 0,
+		fps:          0,
+		showFps:      true,
+		theme:        constants.ThemeCosmos,
 	}
 }
 
@@ -69,10 +69,14 @@ func (gs *GameSettings) SetShowFps(showFps bool) {
 	gs.showFps = showFps
 }
 
-func (gs *GameSettings) MainBackground() sdkconstants.AppImageName {
-	return gs.mainBackground
+func (gs *GameSettings) Theme() sdkconstants.AppTheme {
+	return constants.APP_THEMES[gs.theme]
 }
 
-func (gs *GameSettings) SetMainBackground(bg sdkconstants.AppImageName) {
-	gs.mainBackground = bg
+func (gs *GameSettings) ThemeName() sdkconstants.AppThemeName {
+	return gs.theme
+}
+
+func (gs *GameSettings) SetTheme(theme sdkconstants.AppThemeName) {
+	gs.theme = theme
 }

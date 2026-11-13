@@ -87,16 +87,16 @@ func (r *Renderer) Render() {
 				typedObj.Coords().Y,
 				rl.White,
 			)
-			rl.DrawRectangleLinesEx(
-				rl.Rectangle{
-					X:      float32(typedObj.Coords().X),
-					Y:      float32(typedObj.Coords().Y),
-					Width:  float32(typedObj.Width()),
-					Height: float32(typedObj.Height()),
-				},
-				3,
-				rl.Purple,
-			)
+			// rl.DrawRectangleLinesEx(
+			// 	rl.Rectangle{
+			// 		X:      float32(typedObj.Coords().X),
+			// 		Y:      float32(typedObj.Coords().Y),
+			// 		Width:  float32(typedObj.Width()),
+			// 		Height: float32(typedObj.Height()),
+			// 	},
+			// 	3,
+			// 	rl.Purple,
+			// )
 		case interfaces.IRectangleObject:
 			rectangle := rl.Rectangle{
 				X:      float32(typedObj.Coords().X),
@@ -166,7 +166,7 @@ func (r *Renderer) _setStaticObjects() {
 		models.ImageObjectStructParams{
 			Styles:        &common.ObjectStyles{ZIndex: 0},
 			InitialCoords: common.Coords{X: 0, Y: 0},
-			Texture:       imgLoader.GetTexture(settings.MainBackground()),
+			Texture:       imgLoader.GetTexture(settings.Theme().ImgMainBackground),
 			Id:            MainBgObjectId,
 		},
 		r.injector,

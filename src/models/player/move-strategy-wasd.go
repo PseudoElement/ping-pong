@@ -1,4 +1,4 @@
-package movement
+package player
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -31,7 +31,7 @@ func (wkms *WasdKeysMovementStrategy) Setup() {
 	keyPressedUnsubFn := wkms.injector.EventManager().
 		KeyDownEventEmitter().
 		Subscribe(func(event constants.KeyDownEvent) {
-			_wasdPressedEventHandler(event, wkms.target, wkms.injector)
+			wkms._wasdPressedEventHandler(event, wkms.target)
 		})
 
 	wkms.unsubs = append(wkms.unsubs, keyPressedUnsubFn)
@@ -43,10 +43,15 @@ func (wkms *WasdKeysMovementStrategy) Stop() {
 	}
 }
 
-func _wasdPressedEventHandler(
+func (wkms *WasdKeysMovementStrategy) ChangeTarget(newTarget interfaces.IObjectWithWidthAndHeight) {
+	wkms.Stop()
+	wkms.target = newTarget
+	wkms.Setup()
+}
+
+func (wkms *WasdKeysMovementStrategy) _wasdPressedEventHandler(
 	event constants.KeyDownEvent,
 	target interfaces.IObjectWithWidthAndHeight,
-	injector interfaces.IInjector,
 ) {
 	stepY := int32(8)
 
@@ -59,7 +64,7 @@ func _wasdPressedEventHandler(
 			})
 		}
 	case rl.KeyS:
-		if target.Coords().Y+target.Height() <= injector.GameSettings().WindowHeight()-stepY {
+		if target.Coords().Y+target.Height() <= wkms.injector.GameSettings().WindowHeight()-stepY {
 			target.SetCoords(common.Coords{
 				Y: target.Coords().Y + stepY,
 				X: target.Coords().X,

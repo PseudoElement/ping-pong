@@ -34,7 +34,7 @@ func (so *ScreenOptions) OnDestroy() {
 func (so *ScreenOptions) _init() {
 	windowWidth := so.injector.GameSettings().WindowWidth()
 	windowHeight := so.injector.GameSettings().WindowHeight()
-	mainBgCode := so.injector.GameSettings().MainBackground()
+	mainBgCode := so.injector.GameSettings().Theme().ImgMainBackground
 	bgImg, _ := so.injector.ImageLoader().GetAppBackground(mainBgCode)
 
 	wrapper := NewRectangleObject(
@@ -94,7 +94,7 @@ func (so *ScreenOptions) _init() {
 	mouseMoveEventUnsubFn := so.injector.EventManager().
 		MouseMoveEventEmitter().
 		Subscribe(func(event sdkconstants.MouseMoveEvent) {
-			_mouseMoveEventHandler(event, so.textObjectsPool, so.injector)
+			_mouseMoveEventHandler(event, so.textObjectsPool)
 		})
 
 	so.appendUnsubs(mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
@@ -128,32 +128,35 @@ func _changeBackgroundBtnEventHandler(
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
-			currentBgName := injector.GameSettings().MainBackground()
-			appBackgrounds := injector.ImageLoader().GetAppBackgrounds()
+			currentThemeName := injector.GameSettings().ThemeName()
+			appThemes := constants.ThemeNamesList()
 
-			var nextBg sdkconstants.AppImage
-			for idx, bgImg := range appBackgrounds {
-				if currentBgName == bgImg.Name {
-					if idx == len(appBackgrounds)-1 {
-						nextBg = appBackgrounds[0]
+			var nextTheme sdkconstants.AppThemeName
+			for idx, themeName := range appThemes {
+				if currentThemeName == themeName {
+					if idx == len(appThemes)-1 {
+						nextTheme = appThemes[0]
 					} else {
-						nextBg = appBackgrounds[idx+1]
+						nextTheme = appThemes[idx+1]
 					}
 					break
 				}
 			}
 
-			injector.GameSettings().SetMainBackground(nextBg.Name)
+			injector.GameSettings().SetTheme(nextTheme)
+			newBgName := injector.GameSettings().Theme().ImgMainBackground
+			bgImg, _ := injector.ImageLoader().GetAppBackground(newBgName)
+
 			injector.EventManager().
 				BackgroundChangeEventEmitter().
 				Emit(sdkconstants.BackgroundChangeEvent{
-					Name: string(nextBg.Name),
-					Href: nextBg.Href,
+					Name: string(newBgName),
+					Href: bgImg.Href,
 				})
 
 			for _, obj := range screen.textObjectsPool {
 				if obj.Id() == "change-bg-btn-id" {
-					obj.SetValue(fmt.Sprintf("Change theme: <%s>\n", nextBg.Name))
+					obj.SetValue(fmt.Sprintf("Change theme: <%s>\n", nextTheme))
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-package movement
+package player
 
 import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
@@ -35,49 +35,51 @@ func NewTopBottomMovementStrategy(
 	return strategy
 }
 
-func (akms *TopBottomMovementStrategy) Setup() {
-	keyPressedUnsubFn := akms.injector.EventManager().
+func (tbms *TopBottomMovementStrategy) Setup() {
+	keyPressedUnsubFn := tbms.injector.EventManager().
 		NextFrameEventEmitter().
 		Subscribe(func(event constants.NextFrameEvent) {
-			_topBottomEventHandler(akms.target, akms.injector, &akms.direction)
+			tbms._topBottomEventHandler()
 		})
 
-	akms.unsubs = append(akms.unsubs, keyPressedUnsubFn)
+	tbms.unsubs = append(tbms.unsubs, keyPressedUnsubFn)
 }
 
-func (akms *TopBottomMovementStrategy) Stop() {
-	for _, unsub := range akms.unsubs {
+func (tbms *TopBottomMovementStrategy) Stop() {
+	for _, unsub := range tbms.unsubs {
 		unsub()
 	}
 }
 
-func _topBottomEventHandler(
-	target interfaces.IObjectWithWidthAndHeight,
-	injector interfaces.IInjector,
-	direction *Direction,
-) {
-	stepY := int32(8)
+func (tbms *TopBottomMovementStrategy) ChangeTarget(newTarget interfaces.IObjectWithWidthAndHeight) {
+	tbms.Stop()
+	tbms.target = newTarget
+	tbms.Setup()
+}
 
-	switch *direction {
+func (tbms *TopBottomMovementStrategy) _topBottomEventHandler() {
+	stepY := int32(6)
+
+	switch tbms.direction {
 	case DirectionTop:
-		newPosY := target.Coords().Y - stepY
+		newPosY := tbms.target.Coords().Y - stepY
 		if newPosY < 0 {
 			newPosY = 0
-			*direction = DirectionBottom
+			tbms.direction = DirectionBottom
 		}
-		target.SetCoords(common.Coords{
+		tbms.target.SetCoords(common.Coords{
 			Y: newPosY,
-			X: target.Coords().X,
+			X: tbms.target.Coords().X,
 		})
 	case DirectionBottom:
-		newPosY := target.Coords().Y + stepY
-		if newPosY+target.Height() > injector.GameSettings().WindowHeight() {
-			newPosY = injector.GameSettings().WindowHeight() - target.Height()
-			*direction = DirectionTop
+		newPosY := tbms.target.Coords().Y + stepY
+		if newPosY+tbms.target.Height() > tbms.injector.GameSettings().WindowHeight() {
+			newPosY = tbms.injector.GameSettings().WindowHeight() - tbms.target.Height()
+			tbms.direction = DirectionTop
 		}
-		target.SetCoords(common.Coords{
+		tbms.target.SetCoords(common.Coords{
 			Y: newPosY,
-			X: target.Coords().X,
+			X: tbms.target.Coords().X,
 		})
 	}
 }

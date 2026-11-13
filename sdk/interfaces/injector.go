@@ -25,7 +25,6 @@ type ISoundLoader interface {
 
 type IImageLoader interface {
 	GetTexture(imgName constants.AppImageName) rl.Texture2D
-	GetAppBackgrounds() []constants.AppImage
 	GetAppBackground(bgName constants.AppImageName) (constants.AppImage, bool)
 }
 
@@ -63,6 +62,7 @@ type IGameSettings interface {
 	IsShownFps() bool
 	SetShowFps(showFps bool)
 
-	MainBackground() constants.AppImageName
-	SetMainBackground(bg constants.AppImageName)
+	ThemeName() constants.AppThemeName
+	Theme() constants.AppTheme
+	SetTheme(bg constants.AppThemeName)
 }

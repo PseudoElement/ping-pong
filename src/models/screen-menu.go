@@ -11,7 +11,8 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/models/movement"
+	"github.com/pseudoelement/ping-pong/src/models/ball"
+	"github.com/pseudoelement/ping-pong/src/models/player"
 )
 
 type ScreenMenu struct {
@@ -103,7 +104,7 @@ func (sm *ScreenMenu) _init() {
 	mouseMoveEventUnsubFn := sm.injector.EventManager().
 		MouseMoveEventEmitter().
 		Subscribe(func(event sdkconstants.MouseMoveEvent) {
-			_mouseMoveEventHandler(event, sm.textObjectsPool, sm.injector)
+			_mouseMoveEventHandler(event, sm.textObjectsPool)
 		})
 
 	sm.appendUnsubs(mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
@@ -120,28 +121,7 @@ func _playWithBotBtnEventHandler(
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
 		if mouseEvent.Kind == rl.MouseButtonLeft {
-			screenGame := NewScreenGame(injector)
-
-			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdLeftPlayer)
-			if !ok {
-				panic("[_playWithBotBtnEventHandler] leftPlayerObj not found")
-			}
-			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdRightPlayer)
-			if !ok {
-				panic("[_playWithBotBtnEventHandler] rightPlayerObj not found")
-			}
-
-			leftPlayerMovementStrategy := movement.NewWasdKeysMovementStrategy(
-				leftPlayerObj.(interfaces.IObjectWithWidthAndHeight),
-				injector,
-			)
-			rightPlayerMovementStrategy := movement.NewTopBottomMovementStrategy(
-				rightPlayerObj.(interfaces.IObjectWithWidthAndHeight),
-				injector,
-			)
-
-			screenGame.SetMovementStrategies(leftPlayerMovementStrategy, rightPlayerMovementStrategy)
-			injector.Renderer().SetScreen(screenGame)
+			injector.Renderer().SetScreen(NewScreenPlayWithBot(injector))
 		}
 	}
 }
@@ -164,17 +144,32 @@ func _playWithPlayerBtnEventHandler(
 			if !ok {
 				panic("[_playWithPlayerBtnEventHandler] rightPlayerObj not found")
 			}
+			ballObj, ok := utils.GetChildByIdScreen(screenGame, IdBall)
+			if !ok {
+				panic("[_playWithPlayerBtnEventHandler] ballObj not found")
+			}
 
-			leftPlayerMovementStrategy := movement.NewWasdKeysMovementStrategy(
+			leftPlayerMovementStrategy := player.NewWasdKeysMovementStrategy(
 				leftPlayerObj.(interfaces.IObjectWithWidthAndHeight),
 				injector,
 			)
-			rightPlayerMovementStrategy := movement.NewArrowsKeysMovementStrategy(
+			rightPlayerMovementStrategy := player.NewArrowsKeysMovementStrategy(
 				rightPlayerObj.(interfaces.IObjectWithWidthAndHeight),
 				injector,
 			)
+			ballMovementStrategy := ball.NewDefaultMovementStrategy(
+				ballObj.(interfaces.IObjectWithWidthAndHeight),
+				leftPlayerObj.(interfaces.IObjectWithWidthAndHeight),
+				rightPlayerObj.(interfaces.IObjectWithWidthAndHeight),
+				screenGame.gameStorage,
+				injector,
+			)
 
-			screenGame.SetMovementStrategies(leftPlayerMovementStrategy, rightPlayerMovementStrategy)
+			screenGame.SetMovementStrategies(
+				leftPlayerMovementStrategy,
+				rightPlayerMovementStrategy,
+				ballMovementStrategy,
+			)
 			injector.Renderer().SetScreen(screenGame)
 		}
 	}
@@ -206,7 +201,6 @@ func _exitBtnEventHandler(mouseEvent sdkconstants.MouseClickEvent, textObj inter
 func _mouseMoveEventHandler(
 	mouseEvent sdkconstants.MouseMoveEvent,
 	textObjects []interfaces.ITextObject,
-	injector *injector.Injector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	objHovered := false

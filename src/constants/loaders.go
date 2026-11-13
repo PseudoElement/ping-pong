@@ -28,12 +28,15 @@ const (
 
 	ImgPlayerRocketRight constants.AppImageName = "PlayerRocketRight"
 	ImgPlayerRocketLeft  constants.AppImageName = "PlayerRocketLeft"
-	ImgBallBaseball      constants.AppImageName = "ImgBallBaseball"
+
+	ImgBallTenis  constants.AppImageName = "ImgBallTenis"
+	ImgBallCosmos constants.AppImageName = "ImgBallCosmos"
+	ImgBallHockey constants.AppImageName = "ImgBallHockey"
 )
 
 func _imageCosmosBackground(windowWidth, windowHeight int32) constants.AppImage {
 	return constants.AppImage{
-		Href:   "../assets/images/cosmos-bg.png",
+		Href:   "../assets/images/bg-cosmos.png",
 		Width:  windowWidth,
 		Height: windowHeight,
 		Name:   ImgCosmosBackground,
@@ -42,7 +45,7 @@ func _imageCosmosBackground(windowWidth, windowHeight int32) constants.AppImage 
 
 func _imageTenisBackground(windowWidth, windowHeight int32) constants.AppImage {
 	return constants.AppImage{
-		Href:   "../assets/images/tenis-bg.png",
+		Href:   "../assets/images/bg-tenis.png",
 		Width:  windowWidth,
 		Height: windowHeight,
 		Name:   ImgTenisBackground,
@@ -51,7 +54,7 @@ func _imageTenisBackground(windowWidth, windowHeight int32) constants.AppImage {
 
 func _imageHockeyBackground(windowWidth, windowHeight int32) constants.AppImage {
 	return constants.AppImage{
-		Href:   "../assets/images/hockey-bg.png",
+		Href:   "../assets/images/bg-hockey.png",
 		Width:  windowWidth,
 		Height: windowHeight,
 		Name:   ImgHockeyBackground,
@@ -77,12 +80,30 @@ func _imagePlayerRocketLeft(windowWidth, windowHeight int32) constants.AppImage 
 	}
 }
 
-func _imageBaseballBall(windowWidth, windowHeight int32) constants.AppImage {
+func _imageBallTenis(windowWidth, windowHeight int32) constants.AppImage {
 	return constants.AppImage{
-		Href:   "../assets/images/ball-baseball.png",
+		Href:   "../assets/images/ball-tenis.png",
 		Width:  90,
 		Height: 90,
-		Name:   ImgBallBaseball,
+		Name:   ImgBallTenis,
+	}
+}
+
+func _imageBallCosmos(windowWidth, windowHeight int32) constants.AppImage {
+	return constants.AppImage{
+		Href:   "../assets/images/ball-fire.png",
+		Width:  90,
+		Height: 90,
+		Name:   ImgBallCosmos,
+	}
+}
+
+func _imageBallHockey(windowWidth, windowHeight int32) constants.AppImage {
+	return constants.AppImage{
+		Href:   "../assets/images/ball-hockey.png",
+		Width:  90,
+		Height: 90,
+		Name:   ImgBallHockey,
 	}
 }
 
@@ -98,7 +119,9 @@ var APP_IMAGE_FACTORIES []constants.ImageFactory = common.MergeSlices(
 		{
 			_imagePlayerRocketRight,
 			_imagePlayerRocketLeft,
-			_imageBaseballBall,
+			_imageBallTenis,
+			_imageBallCosmos,
+			_imageBallHockey,
 		},
 	},
 )

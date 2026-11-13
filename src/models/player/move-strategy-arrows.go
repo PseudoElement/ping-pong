@@ -1,4 +1,4 @@
-package movement
+package player
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -31,7 +31,7 @@ func (akms *ArrowsKeysMovementStrategy) Setup() {
 	keyPressedUnsubFn := akms.injector.EventManager().
 		KeyDownEventEmitter().
 		Subscribe(func(event constants.KeyDownEvent) {
-			_arrowPressedEventHandler(event, akms.target, akms.injector)
+			akms._arrowPressedEventHandler(event, akms.target)
 		})
 
 	akms.unsubs = append(akms.unsubs, keyPressedUnsubFn)
@@ -43,10 +43,15 @@ func (akms *ArrowsKeysMovementStrategy) Stop() {
 	}
 }
 
-func _arrowPressedEventHandler(
+func (akms *ArrowsKeysMovementStrategy) ChangeTarget(newTarget interfaces.IObjectWithWidthAndHeight) {
+	akms.Stop()
+	akms.target = newTarget
+	akms.Setup()
+}
+
+func (akms *ArrowsKeysMovementStrategy) _arrowPressedEventHandler(
 	event constants.KeyDownEvent,
 	target interfaces.IObjectWithWidthAndHeight,
-	injector interfaces.IInjector,
 ) {
 	stepY := int32(8)
 
@@ -59,7 +64,7 @@ func _arrowPressedEventHandler(
 			})
 		}
 	case rl.KeyDown:
-		if target.Coords().Y+target.Height() <= injector.GameSettings().WindowHeight()-stepY {
+		if target.Coords().Y+target.Height() <= akms.injector.GameSettings().WindowHeight()-stepY {
 			target.SetCoords(common.Coords{
 				Y: target.Coords().Y + stepY,
 				X: target.Coords().X,

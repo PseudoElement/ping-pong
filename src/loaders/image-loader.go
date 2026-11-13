@@ -3,6 +3,7 @@ package loaders
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	sdkconstants "github.com/pseudoelement/ping-pong/sdk/constants"
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
 )
@@ -12,6 +13,8 @@ type ImageLoader struct {
 	windowHeight int32
 	textures     map[sdkconstants.AppImageName]rl.Texture2D
 }
+
+var _ interfaces.IImageLoader = (*ImageLoader)(nil)
 
 func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 	loader := &ImageLoader{
@@ -25,14 +28,6 @@ func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 
 func (il *ImageLoader) GetTexture(imgName sdkconstants.AppImageName) rl.Texture2D {
 	return il.textures[imgName]
-}
-
-func (il *ImageLoader) GetAppBackgrounds() []sdkconstants.AppImage {
-	bgs := make([]sdkconstants.AppImage, len(constants.APP_BACKGROUND_FACTORIES))
-	for idx, bgFactory := range constants.APP_BACKGROUND_FACTORIES {
-		bgs[idx] = bgFactory(il.windowWidth, il.windowHeight)
-	}
-	return bgs
 }
 
 func (il *ImageLoader) GetAppBackground(bgName sdkconstants.AppImageName) (sdkconstants.AppImage, bool) {
