@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"runtime"
 	"time"
 
 	"github.com/fstanis/screenresolution"
@@ -35,23 +36,34 @@ func (g *Game) Start() {
 	}
 	fmt.Printf("[main] Width: %d, Height: %d.\n", resolution.Width, resolution.Height)
 
-	windowWidth, windowHeight := int32(resolution.Width), int32(resolution.Height-70)
 	fontSize := int32(35)
+	var windowWidth, windowHeight int32
+	if runtime.GOOS == "windows" {
+		windowWidth, windowHeight = int32(resolution.Width), int32(resolution.Height)
+	} else {
+		windowWidth, windowHeight = int32(resolution.Width), int32(resolution.Height-70)
+	}
 
 	rl.InitAudioDevice()
 	rl.InitWindow(windowWidth, windowHeight, "PingPong(raylib)")
 	rl.SetTargetFPS(120)
 	rl.SetExitKey(math.MinInt32)
 
+	if runtime.GOOS == "windows" {
+		rl.ToggleFullscreen()
+	}
+
 	eventManager := events.NewEventManager()
 	soundLoader := loaders.NewSoundLoader()
 	imageLoader := loaders.NewImageLoader(windowWidth, windowHeight)
+	fontLoader := loaders.NewFontLoader()
 	gameSettings := settings.NewGameSettings()
 	renderer := NewRenderer(g.injector)
 
 	g.injector.SetEventManager(eventManager)
 	g.injector.SetSoundLoader(soundLoader)
 	g.injector.SetImageLoader(imageLoader)
+	g.injector.SetFontLoader(fontLoader)
 	g.injector.SetGameSettings(gameSettings)
 	g.injector.SetRenderer(renderer)
 

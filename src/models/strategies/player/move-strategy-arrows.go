@@ -53,7 +53,7 @@ func (akms *ArrowsKeysMovementStrategy) _arrowPressedEventHandler(
 	event constants.KeyDownEvent,
 	target interfaces.IObjectWithWidthAndHeight,
 ) {
-	stepY := int32(8)
+	stepY := int32(12)
 
 	switch event.KeyCode {
 	case rl.KeyUp:

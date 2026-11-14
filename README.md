@@ -4,12 +4,12 @@
 
 Investigate what kind of stuff I can do with raylib
 
-**CODE**
+**RESTRICTIONS**
 
 1. Use raylib-go toolkit
 2. Use event driven architecture
 
-**RESTRICTIONS:**
+**NOTES**
 
 1. Implement 2 pads
    a) one pad is under control of player

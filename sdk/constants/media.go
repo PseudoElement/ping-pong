@@ -4,6 +4,8 @@ type AppSoundName string
 
 type AppImageName string
 
+type AppFontName string
+
 type ImageFactory func(windowWidth, windowHeight int32) AppImage
 
 type AppImage struct {

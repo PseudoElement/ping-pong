@@ -144,14 +144,14 @@ func (dms *DefaultMovementStrategy) _defaultMovementEventHandler() {
 	kicksBallByLeftPlayer :=
 		dms.ball.Coords().Y <= dms.leftPlayer.Coords().Y+dms.leftPlayer.Height() &&
 			dms.ball.Coords().Y+dms.ball.Height() >= dms.leftPlayer.Coords().Y &&
-			dms.ball.Coords().X <= dms.leftPlayer.Coords().X+dms.leftPlayer.Width() &&
-			dms.ball.Coords().X+dms.ball.Width() >= dms.leftPlayer.Coords().X
+			dms.ball.Coords().X < dms.leftPlayer.Coords().X+dms.leftPlayer.Width() &&
+			dms.ball.Coords().X+dms.ball.Width() > dms.leftPlayer.Coords().X+dms.leftPlayer.Width()
 
 	kicksBallByRightPlayer :=
 		dms.ball.Coords().Y <= dms.rightPlayer.Coords().Y+dms.rightPlayer.Height() &&
 			dms.ball.Coords().Y+dms.ball.Height() >= dms.rightPlayer.Coords().Y &&
-			dms.ball.Coords().X+dms.ball.Width() >= dms.rightPlayer.Coords().X &&
-			dms.ball.Coords().X <= dms.rightPlayer.Coords().X+dms.rightPlayer.Width()
+			dms.ball.Coords().X+dms.ball.Width() > dms.rightPlayer.Coords().X &&
+			dms.ball.Coords().X < dms.rightPlayer.Coords().X
 
 	if kicksBallByLeftPlayer || kicksBallByRightPlayer {
 		/* Prevent infinite coordX changes in next frames until the ball leaves area of racket */

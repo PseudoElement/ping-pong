@@ -67,7 +67,7 @@ func (fo *ScoreObject) _init() {
 				ZIndex: math.MaxUint16,
 			},
 			InitialValue: fmt.Sprintf(
-				"%d : %d\n",
+				"%d : %d",
 				fo.gameStorage.GoalEventEmitter().Value().LeftPlayer,
 				fo.gameStorage.GoalEventEmitter().Value().RightPlayer,
 			),
@@ -98,7 +98,7 @@ func _goalEventHandler(
 		injector.SoundLoader().GetSound(constants.SoundGoal),
 	)
 	scoreObj.SetValue(
-		fmt.Sprintf("%d : %d\n", score.LeftPlayer, score.RightPlayer),
+		fmt.Sprintf("%d : %d", score.LeftPlayer, score.RightPlayer),
 	)
 	scoreObj.SetCoords(common.Coords{
 		X: injector.GameSettings().WindowWidth()/2 - (scoreObj.Width() / 2),

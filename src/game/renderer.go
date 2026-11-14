@@ -9,6 +9,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
+	srcconstants "github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/models"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
@@ -73,11 +74,12 @@ func (r *Renderer) Render() {
 
 		switch typedObj := obj.(type) {
 		case interfaces.ITextObject:
-			rl.DrawText(
+			rl.DrawTextEx(
+				r.injector.FontLoader().GetFont(srcconstants.FontLodrina),
 				typedObj.Value(),
-				typedObj.Coords().X,
-				typedObj.Coords().Y,
-				typedObj.FontSize(),
+				rl.Vector2{X: float32(typedObj.Coords().X), Y: float32(typedObj.Coords().Y)},
+				float32(typedObj.FontSize()),
+				srcconstants.LETTER_SPACING,
 				typedObj.Styles().Color,
 			)
 		case interfaces.IImageObject:

@@ -9,9 +9,9 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/models/ball"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
-	"github.com/pseudoelement/ping-pong/src/models/player"
+	"github.com/pseudoelement/ping-pong/src/models/strategies/ball"
+	"github.com/pseudoelement/ping-pong/src/models/strategies/player"
 )
 
 type ScreenPlayWithBot struct {
@@ -52,7 +52,7 @@ func (sm *ScreenPlayWithBot) _init() {
 	playWithEasyBotBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Easy",
-			FontSize:      24,
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
 			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 		},
@@ -61,9 +61,9 @@ func (sm *ScreenPlayWithBot) _init() {
 	playWithProBotBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Professional",
-			FontSize:      24,
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 50},
 		},
 		sm.injector,
 	)

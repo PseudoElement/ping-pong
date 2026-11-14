@@ -11,9 +11,9 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
-	"github.com/pseudoelement/ping-pong/src/models/ball"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
-	"github.com/pseudoelement/ping-pong/src/models/player"
+	"github.com/pseudoelement/ping-pong/src/models/strategies/ball"
+	"github.com/pseudoelement/ping-pong/src/models/strategies/player"
 )
 
 type ScreenMenu struct {
@@ -54,7 +54,7 @@ func (sm *ScreenMenu) _init() {
 	playWithBotBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Play with bot",
-			FontSize:      24,
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
 			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 		},
@@ -63,36 +63,36 @@ func (sm *ScreenMenu) _init() {
 	playWithPlayerBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Play with player",
-			FontSize:      24,
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 50},
 		},
 		sm.injector,
 	)
 	optionsBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Game settings",
-			FontSize:      24,
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 100},
 		},
 		sm.injector,
 	)
 	exitBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Exit",
-			FontSize:      24,
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 120},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 150},
 		},
 		sm.injector,
 	)
 
 	styles.StyleTranslate(wrapper, -0.5, -0.5)
-	styles.StyleTranslate(playWithBotBtn, -0.5, -3)
-	styles.StyleTranslate(playWithPlayerBtn, -0.5, -3)
-	styles.StyleTranslate(optionsBtn, -0.5, -3)
-	styles.StyleTranslate(exitBtn, -0.5, -3)
+	styles.StyleTranslate(playWithBotBtn, -0.5, -3.5)
+	styles.StyleTranslate(playWithPlayerBtn, -0.5, -3.5)
+	styles.StyleTranslate(optionsBtn, -0.5, -3.5)
+	styles.StyleTranslate(exitBtn, -0.5, -3.5)
 
 	mouseClickEventUnsubFn := sm.injector.EventManager().
 		MouseClickEventEmitter().

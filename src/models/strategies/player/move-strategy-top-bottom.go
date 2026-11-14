@@ -58,7 +58,7 @@ func (tbms *TopBottomMovementStrategy) ChangeTarget(newTarget interfaces.IObject
 }
 
 func (tbms *TopBottomMovementStrategy) _topBottomEventHandler() {
-	stepY := int32(6)
+	stepY := int32(8)
 
 	switch tbms.direction {
 	case DirectionTop:

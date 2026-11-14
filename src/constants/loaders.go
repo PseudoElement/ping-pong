@@ -127,3 +127,18 @@ var APP_IMAGE_FACTORIES []constants.ImageFactory = common.MergeSlices(
 		},
 	},
 )
+
+/* ========================================FONTS======================================== */
+
+/**
+ * AppSoundName should start from "../" then it normalized for build dirname
+ */
+const (
+	FontLodrina constants.AppFontName = "../assets/fonts/LondrinaSolid-Regular.ttf"
+)
+
+var APP_FONTS []constants.AppFontName = []constants.AppFontName{
+	FontLodrina,
+}
+
+const LETTER_SPACING float32 = 2

@@ -9,11 +9,14 @@ import (
 type IInjector interface {
 	SoundLoader() ISoundLoader
 	ImageLoader() IImageLoader
+	FontLoader() IFontLoader
 	EventManager() IEventManager
 	GameSettings() IGameSettings
 	Renderer() IRenderer
 
 	SetSoundLoader(soundLoader ISoundLoader)
+	SetImageLoader(imageLoader IImageLoader)
+	SetFontLoader(fontLoader IFontLoader)
 	SetEventManager(eventManager IEventManager)
 	SetGameSettings(gameSettings IGameSettings)
 	SetRenderer(renderer IRenderer)
@@ -26,6 +29,10 @@ type ISoundLoader interface {
 type IImageLoader interface {
 	GetTexture(imgName constants.AppImageName) rl.Texture2D
 	GetAppBackground(bgName constants.AppImageName) (constants.AppImage, bool)
+}
+
+type IFontLoader interface {
+	GetFont(fontName constants.AppFontName) rl.Font
 }
 
 type IEventManager interface {

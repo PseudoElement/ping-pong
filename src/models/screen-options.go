@@ -34,6 +34,7 @@ func (so *ScreenOptions) OnDestroy() {
 func (so *ScreenOptions) _init() {
 	windowWidth := so.injector.GameSettings().WindowWidth()
 	windowHeight := so.injector.GameSettings().WindowHeight()
+
 	mainBgCode := so.injector.GameSettings().Theme().ImgMainBackground
 	ballVelocity := so.injector.GameSettings().BallVelocity().X
 	bgImg, _ := so.injector.ImageLoader().GetAppBackground(mainBgCode)
@@ -54,7 +55,7 @@ func (so *ScreenOptions) _init() {
 	toggleFpsBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Toggle FPS counter",
-			FontSize:      24,
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
 			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 		},
@@ -62,20 +63,20 @@ func (so *ScreenOptions) _init() {
 	)
 	changeBackgroundBtn := NewTextObject(
 		TextObjectStructParams{
-			InitialValue:  fmt.Sprintf("Change theme: <%s>\n", bgImg.Name),
-			FontSize:      24,
+			InitialValue:  fmt.Sprintf("Change theme: <%s>", bgImg.Name),
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 40},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 50},
 			Id:            "change-bg-btn-id",
 		},
 		so.injector,
 	)
 	changeBallVelocityBtn := NewTextObject(
 		TextObjectStructParams{
-			InitialValue:  fmt.Sprintf("Change ball velocity: <%d>\n", ballVelocity),
-			FontSize:      24,
+			InitialValue:  fmt.Sprintf("Change ball velocity: <%d>", ballVelocity),
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 100},
 			Id:            "change-velocity-btn-id",
 		},
 		so.injector,
@@ -83,18 +84,18 @@ func (so *ScreenOptions) _init() {
 	backBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Back",
-			FontSize:      24,
+			FontSize:      30,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 120},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 150},
 		},
 		so.injector,
 	)
 
 	styles.StyleTranslate(wrapper, -0.5, -0.5)
-	styles.StyleTranslate(toggleFpsBtn, -0.5, -2)
-	styles.StyleTranslate(changeBackgroundBtn, -0.5, -2)
-	styles.StyleTranslate(changeBallVelocityBtn, -0.5, -2)
-	styles.StyleTranslate(backBtn, -0.5, -2)
+	styles.StyleTranslate(toggleFpsBtn, -0.5, -3.5)
+	styles.StyleTranslate(changeBackgroundBtn, -0.5, -3.5)
+	styles.StyleTranslate(changeBallVelocityBtn, -0.5, -3.5)
+	styles.StyleTranslate(backBtn, -0.5, -3.5)
 
 	mouseClickEventUnsubFn := so.injector.EventManager().
 		MouseClickEventEmitter().

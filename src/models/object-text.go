@@ -5,6 +5,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+	srcconstants "github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 )
 
@@ -63,10 +64,19 @@ func (to *TextObject) FontSize() int32 {
 }
 
 func (to *TextObject) Width() int32 {
-	return rl.MeasureText(to.value, to.fontSize)
-	// return int32((float64(to.FontSize()) / 1.75)) * int32(len(to.Value()))
+	return int32(rl.MeasureTextEx(
+		to.injector.FontLoader().GetFont(srcconstants.FontLodrina),
+		to.value,
+		float32(to.fontSize),
+		srcconstants.LETTER_SPACING,
+	).X)
 }
 
 func (to *TextObject) Height() int32 {
-	return to.FontSize()
+	return int32(rl.MeasureTextEx(
+		to.injector.FontLoader().GetFont(srcconstants.FontLodrina),
+		to.value,
+		float32(to.fontSize),
+		srcconstants.LETTER_SPACING,
+	).Y)
 }

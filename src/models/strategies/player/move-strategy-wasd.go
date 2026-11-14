@@ -53,7 +53,7 @@ func (wkms *WasdKeysMovementStrategy) _wasdPressedEventHandler(
 	event constants.KeyDownEvent,
 	target interfaces.IObjectWithWidthAndHeight,
 ) {
-	stepY := int32(8)
+	stepY := int32(12)
 
 	switch event.KeyCode {
 	case rl.KeyW:

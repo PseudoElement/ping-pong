@@ -7,10 +7,13 @@ import (
 type Injector struct {
 	soundLoader  interfaces.ISoundLoader
 	imageLoader  interfaces.IImageLoader
+	fontLoader   interfaces.IFontLoader
 	eventManager interfaces.IEventManager
 	renderer     interfaces.IRenderer
 	gameSettings interfaces.IGameSettings
 }
+
+var _ interfaces.IInjector = (*Injector)(nil)
 
 func NewInjector() *Injector {
 	return &Injector{}
@@ -22,6 +25,10 @@ func (i *Injector) SetSoundLoader(soundLoader interfaces.ISoundLoader) {
 
 func (i *Injector) SetImageLoader(imageLoader interfaces.IImageLoader) {
 	i.imageLoader = imageLoader
+}
+
+func (i *Injector) SetFontLoader(fontLoader interfaces.IFontLoader) {
+	i.fontLoader = fontLoader
 }
 
 func (i *Injector) SetEventManager(eventManager interfaces.IEventManager) {
@@ -42,6 +49,10 @@ func (i *Injector) SoundLoader() interfaces.ISoundLoader {
 
 func (i *Injector) ImageLoader() interfaces.IImageLoader {
 	return i.imageLoader
+}
+
+func (i *Injector) FontLoader() interfaces.IFontLoader {
+	return i.fontLoader
 }
 
 func (i *Injector) EventManager() interfaces.IEventManager {
