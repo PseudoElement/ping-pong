@@ -2,6 +2,7 @@ package ball
 
 import (
 	"context"
+	"math"
 	"math/rand"
 	"time"
 
@@ -19,7 +20,8 @@ type DefaultMovementStrategy struct {
 	unsubs   []common.UnsubscribeFn
 	velocity common.Coords
 
-	isDelayedAfterGoal bool
+	stopBall                bool
+	doesBallIntersectRacket bool
 
 	ball        interfaces.IObjectWithWidthAndHeight
 	leftPlayer  interfaces.IObjectWithWidthAndHeight
@@ -35,16 +37,22 @@ func NewDefaultMovementStrategy(
 	gameStorage *gameservices.GameStorage,
 	injector interfaces.IInjector,
 ) *DefaultMovementStrategy {
-	return &DefaultMovementStrategy{
-		injector:           injector,
-		gameStorage:        gameStorage,
-		unsubs:             make([]common.UnsubscribeFn, 0),
-		velocity:           _randomizeVelocity(),
-		isDelayedAfterGoal: false,
-		ball:               ball,
-		leftPlayer:         leftPlayer,
-		rightPlayer:        rightPlayer,
+	strategy := &DefaultMovementStrategy{
+		injector:    injector,
+		gameStorage: gameStorage,
+		unsubs:      make([]common.UnsubscribeFn, 0),
+		velocity:    _randomizeVelocity(injector.GameSettings().BallVelocity()),
+		stopBall:    true,
+		ball:        ball,
+		leftPlayer:  leftPlayer,
+		rightPlayer: rightPlayer,
 	}
+	utils.Timeout(
+		context.Background(),
+		func() { strategy.stopBall = false },
+		time.Second*2,
+	)
+	return strategy
 }
 
 func (dms *DefaultMovementStrategy) Setup() {
@@ -70,7 +78,7 @@ func (dms *DefaultMovementStrategy) ChangeTarget(newTarget interfaces.IObjectWit
 }
 
 func (dms *DefaultMovementStrategy) _defaultMovementEventHandler() {
-	if dms.isDelayedAfterGoal {
+	if dms.stopBall {
 		return
 	}
 
@@ -80,6 +88,57 @@ func (dms *DefaultMovementStrategy) _defaultMovementEventHandler() {
 	next := common.Coords{
 		X: dms.ball.Coords().X + dms.velocity.X,
 		Y: dms.ball.Coords().Y + dms.velocity.Y,
+	}
+
+	if next.X < 0-dms.leftPlayer.Width() {
+		dms.gameStorage.GoalEventEmitter().Emit(gameservices.Score{
+			LeftPlayer:  dms.gameStorage.GoalEventEmitter().Value().LeftPlayer,
+			RightPlayer: dms.gameStorage.GoalEventEmitter().Value().RightPlayer + 1,
+		})
+
+		dms.stopBall = true
+		utils.Timeout(
+			context.Background(),
+			func() { dms.stopBall = false },
+			time.Second*2,
+		)
+		dms.velocity = _randomizeVelocityRightDirection(
+			dms.injector.GameSettings().BallVelocity(),
+		)
+
+		dms.ball.SetCoords(common.Coords{
+			X: dms.injector.GameSettings().WindowWidth()/2 - (dms.ball.Width() / 2),
+			Y: dms.injector.GameSettings().WindowHeight()/2 - (dms.ball.Height() / 2),
+		})
+		return
+	}
+	if next.X > windowWidth+dms.ball.Width() {
+		dms.gameStorage.GoalEventEmitter().Emit(gameservices.Score{
+			LeftPlayer:  dms.gameStorage.GoalEventEmitter().Value().LeftPlayer + 1,
+			RightPlayer: dms.gameStorage.GoalEventEmitter().Value().RightPlayer,
+		})
+
+		dms.stopBall = true
+		utils.Timeout(
+			context.Background(),
+			func() { dms.stopBall = false },
+			time.Second*2,
+		)
+		dms.velocity = _randomizeVelocityLeftDirection(
+			dms.injector.GameSettings().BallVelocity(),
+		)
+
+		dms.ball.SetCoords(common.Coords{
+			X: dms.injector.GameSettings().WindowWidth()/2 - (dms.ball.Width() / 2),
+			Y: dms.injector.GameSettings().WindowHeight()/2 - (dms.ball.Height() / 2),
+		})
+		return
+	}
+
+	if next.Y <= 0 || next.Y+dms.ball.Height() >= windowHeight {
+		dms.gameStorage.BallKickedEventEmitter().Emit(struct{}{})
+		dms.velocity.Y = _randomizeVelocityWithOppositeSign(dms.velocity).Y
+		next.Y = dms.ball.Coords().Y + dms.velocity.Y
 	}
 
 	kicksBallByLeftPlayer :=
@@ -94,102 +153,86 @@ func (dms *DefaultMovementStrategy) _defaultMovementEventHandler() {
 			dms.ball.Coords().X+dms.ball.Width() >= dms.rightPlayer.Coords().X &&
 			dms.ball.Coords().X <= dms.rightPlayer.Coords().X+dms.rightPlayer.Width()
 
-	if next.X < 0-dms.leftPlayer.Width() {
-		dms.gameStorage.ScoreEventEmmiter().Emit(gameservices.Score{
-			LeftPlayer:  dms.gameStorage.ScoreEventEmmiter().Value().LeftPlayer,
-			RightPlayer: dms.gameStorage.ScoreEventEmmiter().Value().RightPlayer + 1,
-		})
-
-		dms.isDelayedAfterGoal = true
-		utils.Timeout(
-			context.Background(),
-			func() { dms.isDelayedAfterGoal = false },
-			3*time.Second,
-		)
-		dms.velocity = _randomizeVelocityRightDirection()
-
-		dms.ball.SetCoords(common.Coords{
-			X: dms.injector.GameSettings().WindowWidth()/2 - (dms.ball.Width() / 2),
-			Y: dms.injector.GameSettings().WindowHeight()/2 - (dms.ball.Height() / 2),
-		})
-		return
-	}
-	if next.X > windowWidth+dms.ball.Width() {
-		dms.gameStorage.ScoreEventEmmiter().Emit(gameservices.Score{
-			LeftPlayer:  dms.gameStorage.ScoreEventEmmiter().Value().LeftPlayer + 1,
-			RightPlayer: dms.gameStorage.ScoreEventEmmiter().Value().RightPlayer,
-		})
-
-		dms.isDelayedAfterGoal = true
-		utils.Timeout(
-			context.Background(),
-			func() { dms.isDelayedAfterGoal = false },
-			3*time.Second,
-		)
-		dms.velocity = _randomizeVelocityLeftDirection()
-
-		dms.ball.SetCoords(common.Coords{
-			X: dms.injector.GameSettings().WindowWidth()/2 - (dms.ball.Width() / 2),
-			Y: dms.injector.GameSettings().WindowHeight()/2 - (dms.ball.Height() / 2),
-		})
-		return
-	}
-
 	if kicksBallByLeftPlayer || kicksBallByRightPlayer {
-		dms.velocity.X = -dms.velocity.X
-		next.X = dms.ball.Coords().X + dms.velocity.X
+		/* Prevent infinite coordX changes in next frames until the ball leaves area of racket */
+		if dms.doesBallIntersectRacket {
+			dms.ball.SetCoords(next)
+		} else {
+			dms.gameStorage.BallKickedEventEmitter().Emit(struct{}{})
+			dms.velocity.X = _randomizeVelocityWithOppositeSign(dms.velocity).X
+			next.X = dms.ball.Coords().X + dms.velocity.X
+			dms.doesBallIntersectRacket = true
+			dms.ball.SetCoords(next)
+		}
+	} else {
+		dms.doesBallIntersectRacket = false
+		dms.ball.SetCoords(next)
 	}
-	if next.Y <= 0 || next.Y+dms.ball.Height() >= windowHeight {
-		dms.velocity.Y = -dms.velocity.Y
-		next.Y = dms.ball.Coords().Y + dms.velocity.Y
-	}
-
-	dms.ball.SetCoords(next)
 }
 
-func _randomizeVelocity() common.Coords {
+func _randomizeVelocity(baseVelocity common.Coords) common.Coords {
 	var velocity common.Coords
 	randY := rand.Intn(2)
 	randX := rand.Intn(2)
 
 	if randX == 0 {
-		velocity.X = 6
+		velocity.X = baseVelocity.X
 	} else {
-		velocity.X = -6
+		velocity.X = -baseVelocity.X
 	}
 
 	if randY == 0 {
-		velocity.Y = 6
+		velocity.Y = baseVelocity.Y
 	} else {
-		velocity.Y = -6
-	}
-
-	return velocity
-}
-
-func _randomizeVelocityLeftDirection() common.Coords {
-	var velocity common.Coords
-	velocity.X = -6
-
-	randY := rand.Intn(2)
-	if randY == 0 {
-		velocity.Y = 6
-	} else {
-		velocity.Y = -6
+		velocity.Y = -baseVelocity.Y
 	}
 
 	return velocity
 }
 
-func _randomizeVelocityRightDirection() common.Coords {
-	var velocity common.Coords
-	velocity.X = 6
+func _randomizeVelocityWithOppositeSign(prevVelocity common.Coords) common.Coords {
+	velocity := _randomizeVelocity(prevVelocity)
 
-	randY := rand.Intn(2)
-	if randY == 0 {
-		velocity.Y = 6
+	if prevVelocity.X > 0 {
+		velocity.X = -int32(math.Abs(float64(velocity.X)))
 	} else {
-		velocity.Y = -6
+		velocity.X = int32(math.Abs(float64(velocity.X)))
+	}
+
+	if prevVelocity.Y > 0 {
+		velocity.Y = -int32(math.Abs(float64(velocity.Y)))
+	} else {
+		velocity.Y = int32(math.Abs(float64(velocity.X)))
+	}
+
+	return velocity
+}
+
+func _randomizeVelocityLeftDirection(baseVelocity common.Coords) common.Coords {
+	var velocity common.Coords
+	velocity.X = -baseVelocity.X
+
+	topOrBottom := rand.Intn(2)
+	randVelocityY := int32(6 + rand.Intn(int(baseVelocity.Y)-5))
+	if topOrBottom == 0 {
+		velocity.Y = randVelocityY
+	} else {
+		velocity.Y = -randVelocityY
+	}
+
+	return velocity
+}
+
+func _randomizeVelocityRightDirection(baseVelocity common.Coords) common.Coords {
+	var velocity common.Coords
+	velocity.X = baseVelocity.X
+
+	topOrBottom := rand.Intn(2)
+	randVelocityY := int32(6 + rand.Intn(int(baseVelocity.Y)-5))
+	if topOrBottom == 0 {
+		velocity.Y = randVelocityY
+	} else {
+		velocity.Y = -randVelocityY
 	}
 
 	return velocity

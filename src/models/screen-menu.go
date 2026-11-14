@@ -12,6 +12,7 @@ import (
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/models/ball"
+	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 	"github.com/pseudoelement/ping-pong/src/models/player"
 )
 
@@ -136,15 +137,15 @@ func _playWithPlayerBtnEventHandler(
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			screenGame := NewScreenGame(injector)
 
-			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdLeftPlayer)
+			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdLeftPlayer)
 			if !ok {
 				panic("[_playWithPlayerBtnEventHandler] leftPlayerObj not found")
 			}
-			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdRightPlayer)
+			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdRightPlayer)
 			if !ok {
 				panic("[_playWithPlayerBtnEventHandler] rightPlayerObj not found")
 			}
-			ballObj, ok := utils.GetChildByIdScreen(screenGame, IdBall)
+			ballObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdBall)
 			if !ok {
 				panic("[_playWithPlayerBtnEventHandler] ballObj not found")
 			}

@@ -35,6 +35,7 @@ func (so *ScreenOptions) _init() {
 	windowWidth := so.injector.GameSettings().WindowWidth()
 	windowHeight := so.injector.GameSettings().WindowHeight()
 	mainBgCode := so.injector.GameSettings().Theme().ImgMainBackground
+	ballVelocity := so.injector.GameSettings().BallVelocity().X
 	bgImg, _ := so.injector.ImageLoader().GetAppBackground(mainBgCode)
 
 	wrapper := NewRectangleObject(
@@ -69,12 +70,22 @@ func (so *ScreenOptions) _init() {
 		},
 		so.injector,
 	)
+	changeBallVelocityBtn := NewTextObject(
+		TextObjectStructParams{
+			InitialValue:  fmt.Sprintf("Change ball velocity: <%d>\n", ballVelocity),
+			FontSize:      24,
+			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
+			Id:            "change-velocity-btn-id",
+		},
+		so.injector,
+	)
 	backBtn := NewTextObject(
 		TextObjectStructParams{
 			InitialValue:  "Back",
 			FontSize:      24,
 			Styles:        &common.ObjectStyles{Color: rl.Black, ZIndex: 2},
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 80},
+			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight/2 + 120},
 		},
 		so.injector,
 	)
@@ -82,6 +93,7 @@ func (so *ScreenOptions) _init() {
 	styles.StyleTranslate(wrapper, -0.5, -0.5)
 	styles.StyleTranslate(toggleFpsBtn, -0.5, -2)
 	styles.StyleTranslate(changeBackgroundBtn, -0.5, -2)
+	styles.StyleTranslate(changeBallVelocityBtn, -0.5, -2)
 	styles.StyleTranslate(backBtn, -0.5, -2)
 
 	mouseClickEventUnsubFn := so.injector.EventManager().
@@ -89,6 +101,7 @@ func (so *ScreenOptions) _init() {
 		Subscribe(func(event sdkconstants.MouseClickEvent) {
 			_toggleFpsBtnEventHandler(event, toggleFpsBtn, so.injector)
 			_changeBackgroundBtnEventHandler(event, changeBackgroundBtn, so.injector, so)
+			_changeVelocityBtnEventHandler(event, changeBallVelocityBtn, so.injector)
 			_backBtnEventHandler(event, backBtn, so.injector)
 		})
 	mouseMoveEventUnsubFn := so.injector.EventManager().
@@ -99,7 +112,7 @@ func (so *ScreenOptions) _init() {
 
 	so.appendUnsubs(mouseClickEventUnsubFn, mouseMoveEventUnsubFn)
 
-	so.appendTextObjects(toggleFpsBtn, changeBackgroundBtn, backBtn)
+	so.appendTextObjects(toggleFpsBtn, changeBackgroundBtn, changeBallVelocityBtn, backBtn)
 	so.appendRectObjects(wrapper)
 }
 
@@ -159,6 +172,21 @@ func _changeBackgroundBtnEventHandler(
 					obj.SetValue(fmt.Sprintf("Change theme: <%s>\n", nextTheme))
 				}
 			}
+		}
+	}
+}
+
+func _changeVelocityBtnEventHandler(
+	mouseEvent sdkconstants.MouseClickEvent,
+	textObj interfaces.ITextObject,
+	injector *injector.Injector,
+) {
+	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
+	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
+		if mouseEvent.Kind == rl.MouseButtonLeft {
+			injector.GameSettings().ChangeBallVelocity()
+			ballVelocity := injector.GameSettings().BallVelocity().X
+			textObj.SetValue(fmt.Sprintf("Change ball velocity: <%d>\n", ballVelocity))
 		}
 	}
 }

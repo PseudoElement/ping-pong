@@ -3,15 +3,21 @@ package gameservices
 import "github.com/pseudoelement/ping-pong/sdk/common"
 
 type GameStorage struct {
-	scoreEventEmmiter *common.EventEmitter[Score]
+	goalEventEmitter       *common.EventEmitter[Score]
+	ballKickedEventEmitter *common.EventEmitter[struct{}]
 }
 
 func NewGameStorage() *GameStorage {
 	return &GameStorage{
-		scoreEventEmmiter: common.NewEventEmitter(Score{}),
+		goalEventEmitter:       common.NewEventEmitter(Score{}),
+		ballKickedEventEmitter: common.NewEventEmitter(struct{}{}),
 	}
 }
 
-func (gs *GameStorage) ScoreEventEmmiter() *common.EventEmitter[Score] {
-	return gs.scoreEventEmmiter
+func (gs *GameStorage) GoalEventEmitter() *common.EventEmitter[Score] {
+	return gs.goalEventEmitter
+}
+
+func (gs *GameStorage) BallKickedEventEmitter() *common.EventEmitter[struct{}] {
+	return gs.ballKickedEventEmitter
 }

@@ -2,7 +2,6 @@ package game
 
 import (
 	"cmp"
-	"math"
 	"slices"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -12,6 +11,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/models"
+	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 )
 
 type Renderer struct {
@@ -152,22 +152,13 @@ func (r *Renderer) _setStaticObjects() {
 	settings := r.injector.GameSettings()
 	imgLoader := r.injector.ImageLoader()
 
-	fpsObject := models.NewFpsObject(
-		models.TextObjectStructParams{
-			InitialValue:  "0 FPS",
-			FontSize:      32,
-			Styles:        &common.ObjectStyles{Color: rl.Red, ZIndex: math.MaxInt16},
-			InitialCoords: common.Coords{X: 10, Y: 5},
-			Id:            FpsObjectId,
-		},
-		r.injector,
-	)
+	fpsObject := models.NewFpsObject(modelsconstants.FpsObjectId, r.injector)
 	appBackgroundObject := models.NewImageObject(
 		models.ImageObjectStructParams{
 			Styles:        &common.ObjectStyles{ZIndex: 0},
 			InitialCoords: common.Coords{X: 0, Y: 0},
 			Texture:       imgLoader.GetTexture(settings.Theme().ImgMainBackground),
-			Id:            MainBgObjectId,
+			Id:            modelsconstants.MainBgObjectId,
 		},
 		r.injector,
 	)
@@ -180,21 +171,12 @@ func _fpsToggleEventHandler(
 	renderer *Renderer,
 ) {
 	if event.ShowFps {
-		fpsObject := models.NewFpsObject(
-			models.TextObjectStructParams{
-				InitialValue:  "0 FPS",
-				FontSize:      32,
-				Styles:        &common.ObjectStyles{Color: rl.Red, ZIndex: math.MaxInt16},
-				InitialCoords: common.Coords{X: 10, Y: 5},
-				Id:            FpsObjectId,
-			},
-			renderer.injector,
-		)
+		fpsObject := models.NewFpsObject(modelsconstants.FpsObjectId, renderer.injector)
 		renderer.staticObjects = append(renderer.staticObjects, fpsObject)
 	} else {
 		newStaticObjects := make([]interfaces.IBaseObject, 0, len(renderer.staticObjects))
 		for _, obj := range renderer.staticObjects {
-			if obj.Id() == FpsObjectId {
+			if obj.Id() == modelsconstants.FpsObjectId {
 				continue
 			}
 			newStaticObjects = append(newStaticObjects, obj)
@@ -211,13 +193,13 @@ func _backgroundChangeEventHandler(
 
 	newStaticObjects := make([]interfaces.IBaseObject, 0, len(renderer.staticObjects))
 	for _, obj := range renderer.staticObjects {
-		if obj.Id() == MainBgObjectId {
+		if obj.Id() == modelsconstants.MainBgObjectId {
 			obj = models.NewImageObject(
 				models.ImageObjectStructParams{
 					Styles:        &common.ObjectStyles{ZIndex: 0},
 					InitialCoords: common.Coords{X: 0, Y: 0},
 					Texture:       imgLoader.GetTexture(constants.AppImageName(event.Name)),
-					Id:            MainBgObjectId,
+					Id:            modelsconstants.MainBgObjectId,
 				},
 				renderer.injector,
 			)

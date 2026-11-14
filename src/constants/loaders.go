@@ -11,11 +11,13 @@ import (
  * AppSoundName should start from "../" then it normalized for build dirname
  */
 const (
-	SoundCoinEarn constants.AppSoundName = "../assets/audios/coin-earn.mp3"
+	SoundGoal constants.AppSoundName = "../assets/audios/goal.mp3"
+	SoundKick constants.AppSoundName = "../assets/audios/kick.mp3"
 )
 
 var APP_SOUNDS []constants.AppSoundName = []constants.AppSoundName{
-	SoundCoinEarn,
+	SoundGoal,
+	SoundKick,
 }
 
 /* ========================================IMAGES======================================== */

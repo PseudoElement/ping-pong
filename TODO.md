@@ -3,13 +3,13 @@
 
 2. **DONE** Написать ImageLoader с предзагрузкой всех картинок приложения
 
-3. struct NextFrameEventEmiter {} // calls Emit() on every frame
+3. **DONE** struct NextFrameEventEmiter {} // calls Emit() on every frame
    struct GameEventEmiter {} // manually calls Emit() on game event
 
 **DONE** struct WasdKeysMovementStrategy(object IBaseObject, injector \*injector.Injector){}
 **DONE** struct ArrowKeysMovementStrategy(object IBaseObject, injector injector.Injector){}
 **DONE** struct TopBottomMovementStrategy(object IBaseObject, injector injector.Injector){}
-struct BallMirroringMovementStrategy(object IBaseObject, injector injector.Injector){}
+**DONE** struct BallMirroringMovementStrategy(object IBaseObject, injector injector.Injector){}
 
 IMovementStrategy для игрока(-ов) и для бота(-ов) хранится в:
 • GameSettings.LeftPlayerMovementStrategy()
@@ -33,5 +33,10 @@ Setup()
 Stop()
 }
 
-4. Добавить в Settings выбор сложности: Default/God.
-5. Добавить новое окно после Play with bot с выбором сложности бота Easy/Professional
+4. **DONE** Добавить новое окно после Play with bot с выбором сложности бота Easy/Professional
+5. ОТРЕФАКТОРИТЬ папку sdk, оставить там только интерфейсы объектов, IScreen, ивенты
+6. **DONE** Добавить рандомность velocity для движения мяча по Y оси на каждую отбивку
+7. Изменить шрифт
+8. **DONE** Добавить звук рикошета мяча, добавить для этого GameStorage.KickBallEventEmitter()
+9. **DONE** Добавить белый враппер для счета
+10. **DONE** Пофиксить коллизию мяча и ракетки

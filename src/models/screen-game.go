@@ -1,15 +1,13 @@
 package models
 
 import (
-	"fmt"
-	"math"
-
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
+	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 	gameservices "github.com/pseudoelement/ping-pong/src/models/services"
 )
 
@@ -36,6 +34,8 @@ func NewScreenGame(injector *injector.Injector) *ScreenGame {
 
 func (sg *ScreenGame) OnDestroy() {
 	sg.onDestroyBase()
+	rl.ShowCursor()
+
 	if sg.leftPlayerMovementStrategy != nil {
 		sg.leftPlayerMovementStrategy.Stop()
 	}
@@ -68,25 +68,13 @@ func (sg *ScreenGame) _init() {
 	windowWidth := settings.WindowWidth()
 	windowHeight := settings.WindowHeight()
 
-	scoreObj := NewTextObject(
-		TextObjectStructParams{
-			Styles: &common.ObjectStyles{Color: rl.Red, ZIndex: math.MaxUint16},
-			InitialValue: fmt.Sprintf(
-				"%d : %d\n",
-				sg.gameStorage.ScoreEventEmmiter().Value().LeftPlayer,
-				sg.gameStorage.ScoreEventEmmiter().Value().RightPlayer,
-			),
-			FontSize:      50,
-			InitialCoords: common.Coords{X: windowWidth / 2, Y: 5},
-		},
-		sg.injector,
-	)
+	scoreObj := NewScoreObject(sg.gameStorage, sg.injector)
 	leftPlayerObj := NewImageObject(
 		ImageObjectStructParams{
 			Styles:        &common.ObjectStyles{ZIndex: 1},
 			InitialCoords: common.Coords{X: 0, Y: windowHeight / 2},
 			Texture:       imgLoader.GetTexture(constants.ImgPlayerRocketLeft),
-			Id:            IdLeftPlayer,
+			Id:            modelsconstants.IdLeftPlayer,
 		},
 		sg.injector,
 	)
@@ -95,7 +83,7 @@ func (sg *ScreenGame) _init() {
 			Styles:        &common.ObjectStyles{ZIndex: 1},
 			InitialCoords: common.Coords{X: windowWidth, Y: windowHeight / 2},
 			Texture:       imgLoader.GetTexture(constants.ImgPlayerRocketRight),
-			Id:            IdRightPlayer,
+			Id:            modelsconstants.IdRightPlayer,
 		},
 		sg.injector,
 	)
@@ -104,7 +92,7 @@ func (sg *ScreenGame) _init() {
 			Styles:        &common.ObjectStyles{ZIndex: 2},
 			InitialCoords: common.Coords{X: windowWidth / 2, Y: windowHeight / 2},
 			Texture:       imgLoader.GetTexture(sg.injector.GameSettings().Theme().ImgBall),
-			Id:            IdBall,
+			Id:            modelsconstants.IdBall,
 		},
 		sg.injector,
 	)
@@ -114,27 +102,23 @@ func (sg *ScreenGame) _init() {
 	styles.StyleTranslate(rightPlayerObj, -1, -0.5)
 	styles.StyleTranslate(ballObj, -0.5, -0.5)
 
-	gameScoreEventUnsubFn := sg.gameStorage.
-		ScoreEventEmmiter().
-		Subscribe(func(score gameservices.Score) {
-			_scoreUpdatedEventHandler(score, scoreObj, sg.injector)
+	ballKickedEventUnsubFn := sg.gameStorage.
+		BallKickedEventEmitter().
+		Subscribe(func(s struct{}) {
+			_ballKickedEventHandler(sg.injector)
 		})
 
-	sg.appendTextObjects(scoreObj)
+	sg.appendRectObjects(scoreObj)
 	sg.appendImageObjects(leftPlayerObj, rightPlayerObj, ballObj)
-	sg.appendUnsubs(gameScoreEventUnsubFn)
+	sg.appendUnsubs(ballKickedEventUnsubFn)
+
+	rl.HideCursor()
 }
 
-func _scoreUpdatedEventHandler(
-	score gameservices.Score,
-	scoreObj interfaces.ITextObject,
+func _ballKickedEventHandler(
 	injector *injector.Injector,
 ) {
-	scoreObj.SetValue(
-		fmt.Sprintf("%d : %d\n", score.LeftPlayer, score.RightPlayer),
+	rl.PlaySound(
+		injector.SoundLoader().GetSound(constants.SoundKick),
 	)
-	scoreObj.SetCoords(common.Coords{
-		X: injector.GameSettings().WindowWidth()/2 - (scoreObj.Width() / 2),
-		Y: 5,
-	})
 }

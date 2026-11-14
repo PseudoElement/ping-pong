@@ -50,8 +50,19 @@ func (bmms *BallMirroringMovementStrategy) ChangeTarget(newTarget interfaces.IOb
 }
 
 func (bmms *BallMirroringMovementStrategy) _nextFrameEventHandler() {
-	bmms.target.SetCoords(common.Coords{
+	windowHeight := bmms.injector.GameSettings().WindowHeight()
+
+	nextCoords := common.Coords{
 		X: bmms.target.Coords().X,
 		Y: bmms.ball.Coords().Y,
-	})
+	}
+
+	if nextCoords.Y < 0 {
+		nextCoords.Y = 0
+	}
+	if nextCoords.Y+bmms.target.Height() > windowHeight {
+		nextCoords.Y = windowHeight - bmms.target.Height()
+	}
+
+	bmms.target.SetCoords(nextCoords)
 }

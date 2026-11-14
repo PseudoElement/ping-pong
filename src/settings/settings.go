@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"github.com/pseudoelement/ping-pong/sdk/common"
 	sdkconstants "github.com/pseudoelement/ping-pong/sdk/constants"
 
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
@@ -14,6 +15,7 @@ type GameSettings struct {
 	fps          int32
 	showFps      bool
 	theme        sdkconstants.AppThemeName
+	ballVelocity common.Coords
 }
 
 var _ interfaces.IGameSettings = (*GameSettings)(nil)
@@ -26,6 +28,7 @@ func NewGameSettings() *GameSettings {
 		fps:          0,
 		showFps:      true,
 		theme:        constants.ThemeCosmos,
+		ballVelocity: common.Coords{X: 6, Y: 6},
 	}
 }
 
@@ -79,4 +82,23 @@ func (gs *GameSettings) ThemeName() sdkconstants.AppThemeName {
 
 func (gs *GameSettings) SetTheme(theme sdkconstants.AppThemeName) {
 	gs.theme = theme
+}
+
+func (gs *GameSettings) BallVelocity() common.Coords {
+	return gs.ballVelocity
+}
+
+func (gs *GameSettings) ChangeBallVelocity() {
+	velocity := common.Coords{
+		X: gs.ballVelocity.X + 1,
+		Y: gs.ballVelocity.Y + 1,
+	}
+	if velocity.X > 12 {
+		velocity.X = 6
+	}
+	if velocity.Y > 12 {
+		velocity.Y = 6
+	}
+
+	gs.ballVelocity = velocity
 }

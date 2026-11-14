@@ -65,4 +65,7 @@ type IGameSettings interface {
 	ThemeName() constants.AppThemeName
 	Theme() constants.AppTheme
 	SetTheme(bg constants.AppThemeName)
+
+	BallVelocity() common.Coords
+	ChangeBallVelocity()
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
 	"github.com/pseudoelement/ping-pong/src/models/ball"
+	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 	"github.com/pseudoelement/ping-pong/src/models/player"
 )
 
@@ -68,8 +69,8 @@ func (sm *ScreenPlayWithBot) _init() {
 	)
 
 	styles.StyleTranslate(wrapper, -0.5, -0.5)
-	styles.StyleTranslate(playWithEasyBotBtn, -0.5, -3)
-	styles.StyleTranslate(playWithProBotBtn, -0.5, -3)
+	styles.StyleTranslate(playWithEasyBotBtn, -0.5, -1.5)
+	styles.StyleTranslate(playWithProBotBtn, -0.5, -1.5)
 
 	mouseClickEventUnsubFn := sm.injector.EventManager().
 		MouseClickEventEmitter().
@@ -99,15 +100,15 @@ func _playWithProBotBtnEventHandler(
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			screenGame := NewScreenGame(injector)
 
-			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdLeftPlayer)
+			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdLeftPlayer)
 			if !ok {
 				panic("[_playWithProBotBtnEventHandler] leftPlayerObj not found")
 			}
-			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdRightPlayer)
+			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdRightPlayer)
 			if !ok {
 				panic("[_playWithProBotBtnEventHandler] rightPlayerObj not found")
 			}
-			ballObj, ok := utils.GetChildByIdScreen(screenGame, IdBall)
+			ballObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdBall)
 			if !ok {
 				panic("[_playWithProBotBtnEventHandler] ballObj not found")
 			}
@@ -149,15 +150,15 @@ func _playWithEasyBotBtnEventHandler(
 		if mouseEvent.Kind == rl.MouseButtonLeft {
 			screenGame := NewScreenGame(injector)
 
-			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdLeftPlayer)
+			leftPlayerObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdLeftPlayer)
 			if !ok {
 				panic("[_playWithEasyBotBtnEventHandler] leftPlayerObj not found")
 			}
-			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, IdRightPlayer)
+			rightPlayerObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdRightPlayer)
 			if !ok {
 				panic("[_playWithEasyBotBtnEventHandler] rightPlayerObj not found")
 			}
-			ballObj, ok := utils.GetChildByIdScreen(screenGame, IdBall)
+			ballObj, ok := utils.GetChildByIdScreen(screenGame, modelsconstants.IdBall)
 			if !ok {
 				panic("[_playWithEasyBotBtnEventHandler] ballObj not found")
 			}
