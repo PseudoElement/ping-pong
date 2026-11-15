@@ -29,7 +29,7 @@ func (fl *FontLoader) GetFont(fontName sdkconstants.AppFontName) rl.Font {
 func (fl *FontLoader) _load() {
 	for _, fontName := range constants.APP_FONTS {
 		fontPath := utils.AppPath(fontName)
-		font := rl.LoadFontEx(fontPath.Normalize(), 30, nil)
+		font := rl.LoadFontEx(fontPath.Normalize(), 50, nil)
 		fl.fonts[fontName] = font
 	}
 }

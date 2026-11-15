@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"log"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -17,10 +19,15 @@ func (path *AppPath) Normalize() string {
 		panic("[AppPath_Normalize] invalid path: " + *path)
 	}
 
-	exePath, _ := os.Executable()
-	splitted := strings.Split(exePath, "/")
-	splitted = splitted[:len(splitted)-1]
-	rootPath := strings.Join(splitted, "/")
+	exePath, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
 
-	return rootPath + "/" + relativePath
+	rootPath := filepath.Dir(exePath)
+	fullPath := rootPath + "/" + relativePath
+
+	log.Println("[AppPath_Normalize] fullPath:", fullPath)
+
+	return fullPath
 }
