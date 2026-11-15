@@ -14,6 +14,6 @@ Investigate what kind of stuff I can do with raylib
 1. Implement 2 pads
    a) one pad is under control of player
    b) 2nd pad is bot(computer) or 2nd player
-2. Pads and Ball should be a images(png/svg/jpeg)
-3. Make Computer-pad undefeatable, implement logic when computer-pad repeats coords of ball to dodge it on every attempt
-4. Create game MENU: Play with bot, Play with friend, Exit
+2. Pads and Ball should be the images(png/svg/jpeg)
+3. Make Computer-pad undefeatable, implement logic when computer-pad mirrors coords of the ball to dodge it on every attempt
+4. Create game MENU: Play with bot, Play with friend, Settings, Exit
