@@ -4,6 +4,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type Direction int
@@ -15,16 +16,16 @@ const (
 
 type TopBottomMovementStrategy struct {
 	target    interfaces.IObjectWithWidthAndHeight
-	injector  interfaces.IInjector
+	injector  appinterfaces.IInjector
 	unsubs    []common.UnsubscribeFn
 	direction Direction
 }
 
-var _ interfaces.IMovementStrategy = (*TopBottomMovementStrategy)(nil)
+var _ appinterfaces.IMovementStrategy = (*TopBottomMovementStrategy)(nil)
 
 func NewTopBottomMovementStrategy(
 	target interfaces.IObjectWithWidthAndHeight,
-	injector interfaces.IInjector,
+	injector appinterfaces.IInjector,
 ) *TopBottomMovementStrategy {
 	strategy := &TopBottomMovementStrategy{
 		target:    target,

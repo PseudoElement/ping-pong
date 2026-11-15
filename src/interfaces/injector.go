@@ -1,9 +1,10 @@
-package interfaces
+package appinterfaces
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
+	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 )
 
 type IInjector interface {
@@ -49,8 +50,8 @@ type IEventManager interface {
 
 type IRenderer interface {
 	Render()
-	CurrentScreen() IScreen
-	SetScreen(screen IScreen)
+	CurrentScreen() interfaces.IScreen
+	SetScreen(screen interfaces.IScreen)
 }
 
 type IGameSettings interface {

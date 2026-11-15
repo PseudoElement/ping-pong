@@ -5,19 +5,20 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type ArrowsKeysMovementStrategy struct {
 	target   interfaces.IObjectWithWidthAndHeight
-	injector interfaces.IInjector
+	injector appinterfaces.IInjector
 	unsubs   []common.UnsubscribeFn
 }
 
-var _ interfaces.IMovementStrategy = (*ArrowsKeysMovementStrategy)(nil)
+var _ appinterfaces.IMovementStrategy = (*ArrowsKeysMovementStrategy)(nil)
 
 func NewArrowsKeysMovementStrategy(
 	target interfaces.IObjectWithWidthAndHeight,
-	injector interfaces.IInjector,
+	injector appinterfaces.IInjector,
 ) *ArrowsKeysMovementStrategy {
 	strategy := &ArrowsKeysMovementStrategy{
 		target:   target,

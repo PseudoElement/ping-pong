@@ -4,21 +4,22 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type BallMirroringMovementStrategy struct {
 	target   interfaces.IObjectWithWidthAndHeight
 	ball     interfaces.IObjectWithWidthAndHeight
-	injector interfaces.IInjector
+	injector appinterfaces.IInjector
 	unsubs   []common.UnsubscribeFn
 }
 
-var _ interfaces.IMovementStrategy = (*BallMirroringMovementStrategy)(nil)
+var _ appinterfaces.IMovementStrategy = (*BallMirroringMovementStrategy)(nil)
 
 func NewBallMirroringMovementStrategy(
 	target interfaces.IObjectWithWidthAndHeight,
 	ball interfaces.IObjectWithWidthAndHeight,
-	injector interfaces.IInjector,
+	injector appinterfaces.IInjector,
 ) *BallMirroringMovementStrategy {
 	return &BallMirroringMovementStrategy{
 		target:   target,

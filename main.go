@@ -1,13 +1,6 @@
 package main
 
-import (
-	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/pseudoelement/ping-pong/src/game"
-)
-
-type FontLoader struct {
-	fonts []rl.Font
-}
+import "github.com/pseudoelement/ping-pong/src/game"
 
 func main() {
 	game := game.NewGame()

@@ -11,6 +11,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	srcconstants "github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 	"github.com/pseudoelement/ping-pong/src/models"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 )
@@ -21,7 +22,7 @@ type Renderer struct {
 	staticObjects []interfaces.IBaseObject
 }
 
-var _ interfaces.IRenderer = (*Renderer)(nil)
+var _ appinterfaces.IRenderer = (*Renderer)(nil)
 
 func NewRenderer(injector *injector.Injector) *Renderer {
 	return &Renderer{

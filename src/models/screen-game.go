@@ -7,6 +7,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
 	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 	gameservices "github.com/pseudoelement/ping-pong/src/models/services"
 )
@@ -15,9 +16,9 @@ type ScreenGame struct {
 	*ScreenBase
 
 	gameStorage                 *gameservices.GameStorage
-	leftPlayerMovementStrategy  interfaces.IMovementStrategy
-	rightPlayerMovementStrategy interfaces.IMovementStrategy
-	ballMovementStrategy        interfaces.IMovementStrategy
+	leftPlayerMovementStrategy  appinterfaces.IMovementStrategy
+	rightPlayerMovementStrategy appinterfaces.IMovementStrategy
+	ballMovementStrategy        appinterfaces.IMovementStrategy
 	gameEventEmitter            *common.EventEmitter[any]
 }
 
@@ -48,9 +49,9 @@ func (sg *ScreenGame) OnDestroy() {
 }
 
 func (sg *ScreenGame) SetMovementStrategies(
-	leftPlayerMovementStrategy interfaces.IMovementStrategy,
-	rightPlayerMovementStrategy interfaces.IMovementStrategy,
-	ballMovementStrategy interfaces.IMovementStrategy,
+	leftPlayerMovementStrategy appinterfaces.IMovementStrategy,
+	rightPlayerMovementStrategy appinterfaces.IMovementStrategy,
+	ballMovementStrategy appinterfaces.IMovementStrategy,
 ) {
 	sg.leftPlayerMovementStrategy = leftPlayerMovementStrategy
 	sg.rightPlayerMovementStrategy = rightPlayerMovementStrategy

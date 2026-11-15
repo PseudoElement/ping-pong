@@ -4,7 +4,7 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
-	"github.com/pseudoelement/ping-pong/sdk/interfaces"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type EventManager struct {
@@ -16,7 +16,7 @@ type EventManager struct {
 	nextFrameEventEmitter  *common.EventEmitter[constants.NextFrameEvent]
 }
 
-var _ interfaces.IEventManager = (*EventManager)(nil)
+var _ appinterfaces.IEventManager = (*EventManager)(nil)
 
 func NewEventManager() *EventManager {
 	rl.GetMouseX()

@@ -3,9 +3,9 @@ package loaders
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	sdkconstants "github.com/pseudoelement/ping-pong/sdk/constants"
-	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type ImageLoader struct {
@@ -14,7 +14,7 @@ type ImageLoader struct {
 	textures     map[sdkconstants.AppImageName]rl.Texture2D
 }
 
-var _ interfaces.IImageLoader = (*ImageLoader)(nil)
+var _ appinterfaces.IImageLoader = (*ImageLoader)(nil)
 
 func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 	loader := &ImageLoader{

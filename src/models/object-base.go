@@ -48,10 +48,6 @@ func NewBaseObject(p BaseObjectStructParams, injector *injector.Injector) *BaseO
 	}
 }
 
-func (bo *BaseObject) Injector() interfaces.IInjector {
-	return bo.injector
-}
-
 func (bo *BaseObject) Styles() *common.ObjectStyles {
 	return bo.styles
 }

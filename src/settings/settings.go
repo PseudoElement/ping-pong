@@ -4,8 +4,8 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	sdkconstants "github.com/pseudoelement/ping-pong/sdk/constants"
 
-	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/src/constants"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type GameSettings struct {
@@ -18,7 +18,7 @@ type GameSettings struct {
 	ballVelocity common.Coords
 }
 
-var _ interfaces.IGameSettings = (*GameSettings)(nil)
+var _ appinterfaces.IGameSettings = (*GameSettings)(nil)
 
 func NewGameSettings() *GameSettings {
 	return &GameSettings{

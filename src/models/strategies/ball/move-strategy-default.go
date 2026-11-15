@@ -10,11 +10,12 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 	gameservices "github.com/pseudoelement/ping-pong/src/models/services"
 )
 
 type DefaultMovementStrategy struct {
-	injector    interfaces.IInjector
+	injector    appinterfaces.IInjector
 	gameStorage *gameservices.GameStorage
 
 	unsubs   []common.UnsubscribeFn
@@ -28,14 +29,14 @@ type DefaultMovementStrategy struct {
 	rightPlayer interfaces.IObjectWithWidthAndHeight
 }
 
-var _ interfaces.IMovementStrategy = (*DefaultMovementStrategy)(nil)
+var _ appinterfaces.IMovementStrategy = (*DefaultMovementStrategy)(nil)
 
 func NewDefaultMovementStrategy(
 	ball interfaces.IObjectWithWidthAndHeight,
 	leftPlayer interfaces.IObjectWithWidthAndHeight,
 	rightPlayer interfaces.IObjectWithWidthAndHeight,
 	gameStorage *gameservices.GameStorage,
-	injector interfaces.IInjector,
+	injector appinterfaces.IInjector,
 ) *DefaultMovementStrategy {
 	strategy := &DefaultMovementStrategy{
 		injector:    injector,

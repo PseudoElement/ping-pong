@@ -80,7 +80,7 @@ func (fo *FpsObject) _init() {
 }
 
 func (fo *FpsObject) _nextFrameEventHandler(fpsTextObj interfaces.ITextObject) {
-	settings := fo.Injector().GameSettings()
+	settings := fo.injector.GameSettings()
 
 	value := fmt.Sprintf("%d FPS", settings.Fps())
 	fpsTextObj.SetValue(value)

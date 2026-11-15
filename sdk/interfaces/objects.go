@@ -18,7 +18,6 @@ type IBaseObject interface {
 	AppendChild(child IBaseObject)
 	GetChildByID(id string) (IBaseObject, bool)
 
-	Injector() IInjector
 	Children() []IBaseObject
 }
 
