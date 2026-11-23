@@ -9,7 +9,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 	gameservices "github.com/pseudoelement/ping-pong/src/models/services"
 )
@@ -26,7 +26,7 @@ var _ interfaces.IDestroyable = (*ScoreObject)(nil)
 
 func NewScoreObject(
 	gameStorage *gameservices.GameStorage,
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 ) *ScoreObject {
 	fpsObject := &ScoreObject{
 		RectangleObject: NewRectangleObject(
@@ -92,7 +92,7 @@ func (fo *ScoreObject) _init() {
 func _goalEventHandler(
 	score gameservices.Score,
 	scoreObj interfaces.ITextObject,
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 ) {
 	rl.PlaySound(
 		injector.SoundLoader().GetSound(constants.SoundGoal),

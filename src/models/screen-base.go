@@ -4,11 +4,11 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type ScreenBase struct {
-	injector        *injector.Injector
+	injector        appinterfaces.IInjector
 	textObjectsPool []interfaces.ITextObject
 	imgObjectsPool  []interfaces.IImageObject
 	rectObjectsPool []interfaces.IRectangleObject
@@ -17,7 +17,7 @@ type ScreenBase struct {
 
 var _ interfaces.IScreenBase = (*ScreenBase)(nil)
 
-func NewScreenBase(injector *injector.Injector) *ScreenBase {
+func NewScreenBase(injector appinterfaces.IInjector) *ScreenBase {
 	return &ScreenBase{
 		injector:        injector,
 		textObjectsPool: make([]interfaces.ITextObject, 0),

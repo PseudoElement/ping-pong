@@ -4,13 +4,13 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type RectangleObject struct {
 	*BaseObject
 
-	injector *injector.Injector
+	injector appinterfaces.IInjector
 	width    int32
 	height   int32
 }
@@ -24,7 +24,7 @@ type RectangleObjectStructParams struct {
 	Id            string
 }
 
-func NewRectangleObject(p RectangleObjectStructParams, injector *injector.Injector) *RectangleObject {
+func NewRectangleObject(p RectangleObjectStructParams, injector appinterfaces.IInjector) *RectangleObject {
 	return &RectangleObject{
 		BaseObject: NewBaseObject(
 			BaseObjectStructParams{

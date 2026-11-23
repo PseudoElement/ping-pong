@@ -10,7 +10,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type ScreenOptions struct {
@@ -19,7 +19,7 @@ type ScreenOptions struct {
 
 var _ interfaces.IScreen = (*ScreenOptions)(nil)
 
-func NewScreenOptions(injector *injector.Injector) *ScreenOptions {
+func NewScreenOptions(injector appinterfaces.IInjector) *ScreenOptions {
 	screen := &ScreenOptions{
 		ScreenBase: NewScreenBase(injector),
 	}
@@ -120,7 +120,7 @@ func (so *ScreenOptions) _init() {
 func _toggleFpsBtnEventHandler(
 	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
@@ -136,7 +136,7 @@ func _toggleFpsBtnEventHandler(
 func _changeBackgroundBtnEventHandler(
 	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 	screen *ScreenOptions,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
@@ -180,7 +180,7 @@ func _changeBackgroundBtnEventHandler(
 func _changeVelocityBtnEventHandler(
 	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
@@ -195,7 +195,7 @@ func _changeVelocityBtnEventHandler(
 func _backBtnEventHandler(
 	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {

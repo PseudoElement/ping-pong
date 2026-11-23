@@ -8,7 +8,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	"github.com/pseudoelement/ping-pong/src/constants"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 	"github.com/pseudoelement/ping-pong/src/models/strategies/ball"
 	"github.com/pseudoelement/ping-pong/src/models/strategies/player"
@@ -20,7 +20,7 @@ type ScreenPlayWithBot struct {
 
 var _ interfaces.IScreen = (*ScreenPlayWithBot)(nil)
 
-func NewScreenPlayWithBot(injector *injector.Injector) *ScreenPlayWithBot {
+func NewScreenPlayWithBot(injector appinterfaces.IInjector) *ScreenPlayWithBot {
 	screen := &ScreenPlayWithBot{
 		ScreenBase: NewScreenBase(injector),
 	}
@@ -93,7 +93,7 @@ func (sm *ScreenPlayWithBot) _init() {
 func _playWithProBotBtnEventHandler(
 	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {
@@ -143,7 +143,7 @@ func _playWithProBotBtnEventHandler(
 func _playWithEasyBotBtnEventHandler(
 	mouseEvent sdkconstants.MouseClickEvent,
 	textObj interfaces.ITextObject,
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 ) {
 	mouseCoords := common.Coords{X: mouseEvent.PosX, Y: mouseEvent.PosY}
 	if utils.IsTextObjectHovered(mouseCoords, textObj.Coords(), textObj.Width(), textObj.Height()) {

@@ -5,7 +5,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/common"
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type ImageObjectStructParams struct {
@@ -22,7 +22,7 @@ type ImageObject struct {
 	texture rl.Texture2D
 }
 
-func NewImageObject(p ImageObjectStructParams, injector *injector.Injector) *ImageObject {
+func NewImageObject(p ImageObjectStructParams, injector appinterfaces.IInjector) *ImageObject {
 	return &ImageObject{
 		BaseObject: NewBaseObject(
 			BaseObjectStructParams{

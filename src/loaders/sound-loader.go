@@ -15,7 +15,6 @@ type SoundLoader struct {
 
 func NewSoundLoader() *SoundLoader {
 	loader := &SoundLoader{sounds: make(map[sdkconstants.AppSoundName]rl.Sound)}
-	loader._load()
 	return loader
 }
 
@@ -23,7 +22,7 @@ func (sl *SoundLoader) GetSound(soundName sdkconstants.AppSoundName) rl.Sound {
 	return sl.sounds[soundName]
 }
 
-func (sl *SoundLoader) _load() {
+func (sl *SoundLoader) Load() {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	wg.Add(len(constants.APP_SOUNDS))

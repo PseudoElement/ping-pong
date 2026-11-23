@@ -6,7 +6,6 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
-	"github.com/pseudoelement/ping-pong/src/injector"
 	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 	gameservices "github.com/pseudoelement/ping-pong/src/models/services"
@@ -24,7 +23,7 @@ type ScreenGame struct {
 
 var _ interfaces.IScreen = (*ScreenGame)(nil)
 
-func NewScreenGame(injector *injector.Injector) *ScreenGame {
+func NewScreenGame(injector appinterfaces.IInjector) *ScreenGame {
 	screen := &ScreenGame{
 		ScreenBase:  NewScreenBase(injector),
 		gameStorage: gameservices.NewGameStorage(),
@@ -117,7 +116,7 @@ func (sg *ScreenGame) _init() {
 }
 
 func _ballKickedEventHandler(
-	injector *injector.Injector,
+	injector appinterfaces.IInjector,
 ) {
 	rl.PlaySound(
 		injector.SoundLoader().GetSound(constants.SoundKick),

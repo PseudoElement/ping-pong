@@ -10,7 +10,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/styles"
 	"github.com/pseudoelement/ping-pong/src/constants"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type FpsObject struct {
@@ -22,7 +22,7 @@ type FpsObject struct {
 var _ interfaces.IRectangleObject = (*FpsObject)(nil)
 var _ interfaces.IDestroyable = (*FpsObject)(nil)
 
-func NewFpsObject(id string, injector *injector.Injector) *FpsObject {
+func NewFpsObject(id string, injector appinterfaces.IInjector) *FpsObject {
 	fpsObject := &FpsObject{
 		RectangleObject: NewRectangleObject(
 			RectangleObjectStructParams{

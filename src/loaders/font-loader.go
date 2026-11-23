@@ -18,7 +18,6 @@ func NewFontLoader() *FontLoader {
 	loader := &FontLoader{
 		fonts: make(map[sdkconstants.AppFontName]rl.Font, 1),
 	}
-	loader._load()
 	return loader
 }
 
@@ -26,7 +25,7 @@ func (fl *FontLoader) GetFont(fontName sdkconstants.AppFontName) rl.Font {
 	return fl.fonts[fontName]
 }
 
-func (fl *FontLoader) _load() {
+func (fl *FontLoader) Load() {
 	for _, fontName := range constants.APP_FONTS {
 		fontPath := utils.AppPath(fontName)
 		font := rl.LoadFontEx(fontPath.Normalize(), 50, nil)
