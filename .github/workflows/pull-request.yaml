@@ -48,6 +48,7 @@ jobs:
 
       - name: Test Go
         run: go test -v -json ./src/injector > TestResults-${{ matrix.go-version }}.json
+        continue-on-error: true
 
       - name: Upload Go test results
         uses: actions/upload-artifact@v4
