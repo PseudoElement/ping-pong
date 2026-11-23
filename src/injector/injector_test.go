@@ -32,7 +32,7 @@ func TestInjector(t *testing.T) {
 	inj.SetImageLoader(loaders.NewImageLoader(1920, 1080))
 	inj.SetSoundLoader(loaders.NewSoundLoader())
 	inj.SetGameSettings(settings.NewGameSettings())
-	// inj.SetRenderer(&TestRenderer{})
+	inj.SetRenderer(&TestRenderer{})
 
 	cases := []testCase[*Injector]{
 		{
