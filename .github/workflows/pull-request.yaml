@@ -1,0 +1,42 @@
+name: Upload Go test results
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - src/**
+      - sdk/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ["1.27.x"]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Install dependencies
+        run: go get .
+
+      - name: Vet Go
+        run: go vet ./...
+
+      - name: Build Game
+        run: go build
+
+      - name: Test Go
+        run: go test -v -json ./src/injector > TestResults-${{ matrix.go-version }}.json
+
+      - name: Upload Go test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Go-results-${{ matrix.go-version }}
+          path: TestResults-${{ matrix.go-version }}.json

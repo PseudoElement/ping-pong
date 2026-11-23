@@ -6,7 +6,7 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	srcconstants "github.com/pseudoelement/ping-pong/src/constants"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type TextObjectStructParams struct {
@@ -26,7 +26,7 @@ type TextObject struct {
 	hovered  bool
 }
 
-func NewTextObject(p TextObjectStructParams, injector *injector.Injector) *TextObject {
+func NewTextObject(p TextObjectStructParams, injector appinterfaces.IInjector) *TextObject {
 	return &TextObject{
 		BaseObject: NewBaseObject(
 			BaseObjectStructParams{

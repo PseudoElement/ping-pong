@@ -60,6 +60,10 @@ func (g *Game) Start() {
 	gameSettings := settings.NewGameSettings()
 	renderer := NewRenderer(g.injector)
 
+	fontLoader.Load()
+	imageLoader.Load()
+	soundLoader.Load()
+
 	g.injector.SetEventManager(eventManager)
 	g.injector.SetSoundLoader(soundLoader)
 	g.injector.SetImageLoader(imageLoader)

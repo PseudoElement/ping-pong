@@ -10,21 +10,20 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
 	srcconstants "github.com/pseudoelement/ping-pong/src/constants"
-	"github.com/pseudoelement/ping-pong/src/injector"
 	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 	"github.com/pseudoelement/ping-pong/src/models"
 	modelsconstants "github.com/pseudoelement/ping-pong/src/models/constants"
 )
 
 type Renderer struct {
-	injector      *injector.Injector
+	injector      appinterfaces.IInjector
 	openedScreen  interfaces.IScreen
 	staticObjects []interfaces.IBaseObject
 }
 
 var _ appinterfaces.IRenderer = (*Renderer)(nil)
 
-func NewRenderer(injector *injector.Injector) *Renderer {
+func NewRenderer(injector appinterfaces.IInjector) *Renderer {
 	return &Renderer{
 		injector:      injector,
 		openedScreen:  nil,

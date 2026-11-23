@@ -22,7 +22,6 @@ func NewImageLoader(windowWidth, windowHeight int32) *ImageLoader {
 		windowHeight: windowHeight,
 		windowWidth:  windowWidth,
 	}
-	loader._load()
 	return loader
 }
 
@@ -40,7 +39,7 @@ func (il *ImageLoader) GetAppBackground(bgName sdkconstants.AppImageName) (sdkco
 	return sdkconstants.AppImage{}, false
 }
 
-func (il *ImageLoader) _load() {
+func (il *ImageLoader) Load() {
 	for _, imgFactory := range constants.APP_IMAGE_FACTORIES {
 		img := imgFactory(il.windowWidth, il.windowHeight)
 		imgPath := utils.AppPath(img.Href)

@@ -8,11 +8,11 @@ import (
 	"github.com/pseudoelement/ping-pong/sdk/constants"
 	"github.com/pseudoelement/ping-pong/sdk/interfaces"
 	"github.com/pseudoelement/ping-pong/sdk/utils"
-	"github.com/pseudoelement/ping-pong/src/injector"
+	appinterfaces "github.com/pseudoelement/ping-pong/src/interfaces"
 )
 
 type BaseObject struct {
-	injector *injector.Injector
+	injector appinterfaces.IInjector
 
 	id       string
 	coords   common.Coords
@@ -32,7 +32,7 @@ type BaseObjectStructParams struct {
 	Id            string
 }
 
-func NewBaseObject(p BaseObjectStructParams, injector *injector.Injector) *BaseObject {
+func NewBaseObject(p BaseObjectStructParams, injector appinterfaces.IInjector) *BaseObject {
 	id := p.Id
 	if id == "" {
 		uid, _ := uuid.NewUUID()

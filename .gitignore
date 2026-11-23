@@ -35,3 +35,6 @@ go.work.sum
 # BUILDS
 builds
 .DS_Store
+
+# Test
+TestResults-*.json
